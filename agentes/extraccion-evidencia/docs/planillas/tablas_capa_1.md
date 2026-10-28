@@ -85,3 +85,15 @@ Traducción completa de E, F y G (no se deja nada en inglés salvo siglas y nomb
 2. Releer A:C y K de las filas nuevas y comparar con lo enviado. Si el número de filas no coincide, parar y avisar.
 3. No tocar ni borrar la fila a medio llenar que a veces queda al final (suele tener solo la vacuna en A y fórmulas `GOOGLETRANSLATE` en H:J) salvo que el usuario lo pida. Otras personas pueden borrarla mientras se trabaja: por eso los ajustes posteriores se hacen **releyendo la posición actual**, no por números de fila recordados.
 4. `tools/render_tablas.py` genera las 11 columnas desde el registro validado.
+
+## Ensayos: Clinical efficacy, Safety e Immunogenicity
+
+Vienen de las pestañas `Efficacy` e `Immunogenicity` (mapa en `extraccion_efficacy_immunogenicity.md`).
+
+- **Secciones.** Eficacia clínica -> `Clinical efficacy`. Eventos adversos de ensayos (de cualquiera de las dos pestañas; si el dato está duplicado, una sola vez) -> `Safety`. Anticuerpos -> `Immunogenicity`.
+- **Outcome (C).** `Contracting disease` / `Contracting severe disease` para toda enfermedad que no sea COVID (C-014); `Antibody response`; `Any adverse event` / `Serious adverse events`. Una fila por estudio, desenlace y grupo; dos desenlaces solapados en el mismo Outcome y grupo: solo el análisis principal (C-019).
+- **Grupo (D).** `Overall`; subgrupos por edad juntos en `Older adults`, con un bloque por rango de edad en E, G, H y J (C-018).
+- **E / H.** `<Nombre del ensayo>\n<Phase N> randomized trial\nComparison: vaccinated vs placebo` (o `vs no vaccine`) `\n[<NCT o Autor, año>]\n[<Episte ID>]\n\n<N> participants aged <edad>\n\n<n> vaccine group\n<n> placebo group` (`control group` si no hay placebo). Corchetes cerrados. Si hay preprint y artículo de revista, se cita la revista (C-020). La fila de Immunogenicity usa la N analizada para anticuerpos, que puede ser menor que la de eficacia.
+- **F / I.** `<País completo>\n\nFollow up: <seguimiento>.\n\n<definición del desenlace> was measured.` País, seguimiento y definición se toman del artículo, no de la columna generada.
+- **G / J.** Solo estimaciones que reporta el artículo o la planilla, con su IC (`VE: x% (95% CI: a - b)`). Un bloque por temporada o grupo (C-005). Con 0 eventos: corrección de 0,5 y solo líneas `VE` y `RR` (C-015). Eventos adversos sin RR en la planilla: `Any adverse event: 47/206 (vaccine group) vs 52/207 (placebo group)`. Inmunogenicidad: `Geometric mean titre\n\nVaccine group:\n<x> (95% CI: a - b)\n\nPlacebo group:\n<x> (95% CI: a - b)`; indicar el día de medición si el artículo reporta varios.
+- **Producto.** Antes de aceptar una fila, comprobar fabricante y país en el texto (C-017). Oka-RIT de GSK (Varilrix) queda fuera de la lista.

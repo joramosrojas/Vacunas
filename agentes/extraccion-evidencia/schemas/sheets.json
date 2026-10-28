@@ -6,8 +6,8 @@
     "tabs": {
       "Effectiveness": {"sheetId": 1290642341, "header_row": 1, "agent_columns": ["C:D", "I:AM"], "formula_columns": "AN:AY"},
       "Post_authorization_safety": {"sheetId": 1143188798, "header_row": 1, "note": "ver docs/planillas/extraccion_post_auth_safety.md"},
-      "Immunogenicity": {"sheetId": 1990986245},
-      "Efficacy": {"sheetId": 975072314},
+      "Immunogenicity": {"sheetId": 1990986245, "note": "ver docs/planillas/extraccion_efficacy_immunogenicity.md"},
+      "Efficacy": {"sheetId": 975072314, "note": "ver docs/planillas/extraccion_efficacy_immunogenicity.md"},
       "Criterios de elegibilidad": {"sheetId": 1380680299}
     }
   },
