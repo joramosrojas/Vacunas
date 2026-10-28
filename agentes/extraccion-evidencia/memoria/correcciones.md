@@ -81,3 +81,8 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Qué hice: tomé "varivax" literalmente y dejé fuera SKYVaricella.
 - Qué corresponde: "lo de varivax" = toda la vacuna de varicela (Varivax y SKYVaricella), en todas las pestañas (Effectiveness, Efficacy, Immunogenicity, Post_authorization_safety).
 - Regla: al pedir una vacuna por nombre, revisar todas las pestañas y las marcas de la misma enfermedad; solo pasan a Tablas_capa_1 las filas `Ok`.
+
+## C-017 | 2026-10-28 | estado: activa | ámbito: general
+- Qué hice: pasé a la tabla datos de Varis tal como estaban en la planilla (Varivax, USA, 72 % agrupado, placebo "64") sin contrastarlos con el artículo.
+- Qué corresponde: verificar producto, país, seguimiento y población contra el texto antes de pasar a Tablas_capa_1; usar las estimaciones que reporta el artículo por grupo, no agrupar brazos de distinta formulación.
+- Regla: con el texto disponible, contrastar producto, país, seguimiento, N analizado y estimaciones por brazo antes de escribir en Tablas_capa_1.
