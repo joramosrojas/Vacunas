@@ -11,6 +11,8 @@
 | 2026-10-28 | Sin texto completo -> `Waiting` + nota en D | usuario | `docs/reglas/estados_y_elegibilidad.md` |
 | 2026-10-28 | VE contra no vacunado histórico (Gould, Baxter): se acepta como `Ok` y la tabla aclara el comparador | agente, pendiente de confirmar | `docs/reglas/effectiveness.md` |
 | 2026-10-28 | Se agregan `Gardasil 4` y `Gardasil 9` a la lista de vacunas; nombres de visualización provisorios `Gardasil 4/9 HPV vaccine` | usuario (lista) / agente (nombre, pendiente de confirmar) | `schemas/lists.json`, `docs/reglas/producto_vacuna.md` |
+| 2026-10-28 | VPH: inferir Gardasil 4/9 por país (no por fecha); no inferir en India ni China. Basu 2019 (India) queda `Excluded` | usuario | `docs/reglas/producto_vacuna.md` |
+| 2026-10-28 | Comparador histórico (cohortes vs incidencia histórica) se acepta como `Ok` (Thamsborg, Kjaer, Lynge) | usuario | `docs/reglas/effectiveness.md` |
 
 Resultado de la primera corrida (varicela, 16 filas, Effectiveness): 10 Ok, 5 Excluded, 1 Waiting (ver `casos_resueltos.md`).
 
