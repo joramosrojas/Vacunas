@@ -26,3 +26,6 @@ Nombre de visualización de Vimkunya: `Vimkunya chikungunya vaccine` (confirmado
 
 ## 2026-10-28 | Carga de tablas a SK Platform (Vimkunya, Varivax, SKYVaricella)
 Las tablas de Tablas_capa_1 se suben a la síntesis de SK (sección Report: Vaccine efficacy and effectiveness, Vaccine safety, Post-authorization safety, General characteristics of clinical trials) en inglés, con el formato de las síntesis de referencia (STAMARIL, Qdenga). Sin datos en una tabla: fila estándar "No studies reporting ... were identified". Las citas son nodos `reference` con el Episte ID, que debe existir antes en las referencias de la síntesis. SKYVaricella no tiene filas en Tablas_capa_1: todas sus tablas quedan en "no hay estudios". Acceso: API GraphQL de SK con la sesión del usuario (no se guarda el token).
+
+## 2026-10-28 | Weibel en Overall y subgrupo; versiones en español en SK
+Weibel (Varivax, ECA vs placebo en niños) queda con dos filas en Tablas_capa_1 (grupo `Children and adolescents` y copia `Overall`) y aparece en SK tanto en la tabla general como en la de subgrupos. Las síntesis en español (Vimkunya, Varivax, SKYVaricella) se cargan desde las columnas H:J con los títulos y mensajes de "no hay estudios" de las referencias en español (Ixchiq, MMR L-Zagreb, LC16m8). Los IDs de sección en español son distintos a los del inglés.
