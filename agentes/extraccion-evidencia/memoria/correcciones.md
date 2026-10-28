@@ -101,3 +101,8 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Qué hice: dejé en Tablas_capa_1 filas que citaban el preprint de un estudio ya publicado.
 - Qué corresponde: reemplazar el preprint por el artículo de revista (misma cita y Episte ID del artículo publicado) y dejar el preprint con estado `Preprint`.
 - Regla: si hay versión publicada, la tabla cita la revista; la fila del preprint pasa a `Preprint`.
+
+## C-021 | 2026-10-28 | estado: activa | ámbito: planillas
+- Qué hice: el sheet-writer leyó los IDs de unas filas y escribió después por número de fila; mientras tanto otras personas borraron e insertaron filas y se sobrescribieron 5 filas ajenas de Post_authorization_safety (Donahue, Rodríguez-Galán, Souayah, Bukowinski, Lipkind). Antes, un append_values sobre la última fila existente de la hoja sobrescribió A:D de esa fila (Lee LE, Goulleret), que se restauró a mano.
+- Qué corresponde: las planillas se editan en paralelo; nunca escribir por una fila leída hace minutos.
+- Regla: releer A (Episte ID) de la fila destino inmediatamente antes de cada escritura y escribir solo una fila por llamada; no usar `append_values` con un rango que apunte a una fila con datos (escribe en esa fila); tras cada escritura releer. Si el ID no coincide, no escribir. Antes de sobrescribir cualquier celda con datos, leer su contenido.
