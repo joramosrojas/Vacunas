@@ -56,3 +56,8 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Qué hice: vacuna "Varivax" en estudios que no la nombran, y país "USA".
 - Qué corresponde: país completo en inglés ("United States"); Varivax solo si se nombra o se infiere por país y período (EE. UU. hasta 2006).
 - Regla: ver `docs/reglas/producto_vacuna.md` y `lists.json` (`country_fixes`).
+
+## C-012 | 2026-10-28 | estado: activa | ámbito: general
+- Qué hice: listé artículos pendientes solo con autor y año.
+- Qué corresponde: el usuario busca los PDFs por Episte ID; incluirlo siempre.
+- Regla: toda lista de artículos que se entregue al usuario (pendientes, no accesibles, excluidos, reportes) lleva el Episte ID completo de 40 caracteres, además de fila, autor y año.
