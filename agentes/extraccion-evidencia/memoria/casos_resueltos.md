@@ -22,3 +22,12 @@ Ejemplos cortos que el `extractor` puede consultar. Los datos completos están e
 - VE con IC: Luhm KR (Dengvaxia): VE 17,5 % (12,9-21,9) primera dosis y 24,3 % (20,1-28,2) segunda.
 - Seguridad comparativa: Dag Berild J 2022 (BNT162b2, SCCS): evento `Thrombosis with thrombocytopenia syndrome`, medida `Rate ratio`, 1.04 (0.88 - 1.23), comparación pre/post.
 - Seguridad no comparativa: Otero-Losada M 2023 (BNT162b2): `The study described a disproportionality analysis of ... using data from Medicines and Healthcare Products Regulatory Agency`; `The study reported Guillain-Barré Syndrome incidence was 1.3 per million doses`.
+
+## Seguridad post-autorización — varicela (prueba, 2026-10-28)
+
+| Episte ID (inicio) | Estudio | Resultado | Por qué |
+|---|---|---|---|
+| ca8c2d8f | Moro 2022, VAERS 2006-2020 | Ok, no comparativa, Varivax | El artículo separa la vacuna monovalente (VAR) del MMRV; se extrae solo VAR (producto inferido: única monovalente en EE. UU.). `participants_label` = "doses distributed" |
+| 3c93de97 | Weinmann 2019, herpes zóster en niños | Excluded, comparativa | No nombra el producto y el período 2003-2014 incluye MMRV. El evento (herpes zóster) no está en la lista de desenlaces: `NA` y descripción en "measured as" |
+
+Aprendido: en seguridad comparativa sin estimador de razón (solo tasas) la planilla no tiene dónde poner el resultado; queda en el registro JSON y, si pasa a Ok, hace falta decidir cómo representarlo.
