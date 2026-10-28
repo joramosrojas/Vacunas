@@ -101,3 +101,8 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Qué hice: dejé en Tablas_capa_1 filas que citaban el preprint de un estudio ya publicado.
 - Qué corresponde: reemplazar el preprint por el artículo de revista (misma cita y Episte ID del artículo publicado) y dejar el preprint con estado `Preprint`.
 - Regla: si hay versión publicada, la tabla cita la revista; la fila del preprint pasa a `Preprint`.
+
+## C-021 | 2026-10-28 | estado: activa | ámbito: planillas
+- Qué hice: puse a Weibel (ECA vs placebo, niños de 1 a 14 años) en las tablas de subgrupos de la síntesis en SK, por tener grupo `Children and adolescents`.
+- Qué corresponde: un ECA que compara con placebo va siempre en las tablas generales (eficacia, seguridad, inmunogenicidad), aunque los participantes sean niños.
+- Regla: en SK, ECA vs placebo = tabla general; las tablas de subgrupos solo para análisis por subgrupo dentro de un estudio. Grupo `Overall` en Tablas_capa_1 para esos ECA.
