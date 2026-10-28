@@ -73,9 +73,9 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Regla: en Tablas_capa_1, Outcome = `Contracting disease` / `Contracting severe disease` para toda enfermedad que no sea COVID (también en Clinical efficacy).
 
 ## C-015 | 2026-10-28 | estado: activa | ámbito: effectiveness
-- Qué hice: dejé EV/RR sin estimar cuando un grupo tenía 0 eventos (fórmula de la planilla con #NUM!).
-- Qué corresponde: aplicar la corrección de continuidad de RevMan (sumar 0,5 a cada celda del 2x2) y decirlo en la celda.
-- Regla: con cero eventos en un grupo, calcular RR e IC (log RR, error estándar con 0,5 en las 4 celdas), EV = 1 - RR, y agregar la línea "0.5 added to each cell (zero events in the ... group)". Solo con cero eventos; si no, usar lo que da la planilla o el artículo.
+- Qué hice: dejé EV/RR sin estimar cuando un grupo tenía 0 eventos (fórmula de la planilla con #NUM!); luego agregué una línea con los casos y la nota de la corrección.
+- Qué corresponde: aplicar la corrección de continuidad de RevMan (sumar 0,5 a cada celda del 2x2) y escribir solo EV y RR con su IC, sin nota ni proporción de casos.
+- Regla: con cero eventos en un grupo, calcular RR e IC (log RR, error estándar con 0,5 en las 4 celdas) y EV = 1 - RR. En la celda de la tabla poner solo `VE: x% (95% CI: a - b)` y `RR: x (95% CI: a - b)`, sin la nota "0.5 added" ni la proporción de casos. Solo con cero eventos; si no, usar lo que da la planilla o el artículo.
 
 ## C-016 | 2026-10-28 | estado: activa | ámbito: planillas
 - Qué hice: tomé "varivax" literalmente y dejé fuera SKYVaricella.
