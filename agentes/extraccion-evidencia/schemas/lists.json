@@ -1,0 +1,39 @@
+{
+  "_nota": "Fuente única de las listas de validación. Se actualiza solo cuando el usuario cambia la planilla (ver skills/entender-planilla).",
+  "status": ["Ok", "Pending", "Waiting", "Preprint", "Excluded", "Published", "Repetido", "OkA"],
+  "agent_allowed_status": ["Ok", "Waiting", "Excluded"],
+  "assigned_to": ["JT", "SF", "CV", "SP", "AMR", "FC", "FN"],
+  "vaccine": ["BNT162b2", "BNT162b2 bivalent", "Spikevax/Moderna COVID-19 vaccine", "Sinovac", "Novavax", "MMR", "Dengvaxia", "MVA-BN", "Abrysvo", "Ixchiq", "Qdenga (TAK-003)", "SKYVaricella", "Varivax"],
+  "vaccine_display": {
+    "BNT162b2": "Comirnaty/Pfizer-BNT162b2 COVID-19 vaccine",
+    "BNT162b2 bivalent": "Comirnaty/Pfizer-BNT162b2 COVID-19 vaccine",
+    "Spikevax/Moderna COVID-19 vaccine": "Spikevax/Moderna COVID-19 vaccine",
+    "Sinovac": "CoronaVac/Sinovac COVID-19 vaccine",
+    "Novavax": "Nuvaxovid - Novavax/Serum Institute of India COVID-19 vaccine",
+    "MMR": "Measles, mumps and rubella vaccine",
+    "Dengvaxia": "Dengvaxia",
+    "MVA-BN": "Imvanex - Jynneos mpox vaccine",
+    "Abrysvo": "Abrysvo RSV vaccine",
+    "Ixchiq": "Ixchiq chikungunya vaccine",
+    "Qdenga (TAK-003)": "Qdenga",
+    "SKYVaricella": "SKYVaricella varicella vaccine",
+    "Varivax": "Varivax varicella vaccine"
+  },
+  "comparison": {
+    "effectiveness": ["Vaccinated versus unvaccinated", "Pre-vaccination period versus post-vaccination period"],
+    "safety": ["Vaccinated versus unvaccinated", "Pre-vaccination period versus post-vaccination period", "NA"]
+  },
+  "unit_intervention": {
+    "effectiveness": ["Cases", "Vaccinated", "Doses administered"],
+    "safety": ["Cases", "Vaccinated", "Doses administered", "Controls"]
+  },
+  "unit_control": {
+    "effectiveness": ["Unvaccinated", "Controls", "NA", "Doses administered"],
+    "safety": ["Unvaccinated", "Controls", "NA"]
+  },
+  "effect_measure_effectiveness": ["VE", "RR", "OR", "IRR", "HR"],
+  "effect_measure_safety": ["RR", "OR", "HR", "IRR", "RI", "Rate ratio", "SIR", "NA", "ROR", "OE ratio"],
+  "yes_no": ["Yes", "No"],
+  "safety_outcomes": ["Myocarditis/pericarditis", "Guillain-Barré syndrome", "Thrombosis with thrombocytopenia syndrome", "Capillary leak syndrome", "Cerebral venous sinus thrombosis without thrombocytopenia", "Menstrual disorders", "Multisystem inflammatory syndrome", "Cutaneous small-vessel vasculitis", "Autoimmune hepatitis", "Disseminated intravascular coagulation", "NA", "Aseptic meningitis", "mumps cases", "Stillbirth", "Spontaneous Abortion/Miscarriage", "Antenatal hemorrhage", "Preeclampsia/Eclampsia", "Fetal Vaccinia (congenital infection)", "Congenital anomalies", "Preterm delivery/birth", "Anaphylaxis", "Ophthalmologic Ocular Manifestations"],
+  "country_fixes": {"USA": "United States", "US": "United States", "UK": "United Kingdom"}
+}

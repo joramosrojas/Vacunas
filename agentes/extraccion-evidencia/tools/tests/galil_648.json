@@ -1,0 +1,36 @@
+{
+  "type": "effectiveness",
+  "episte_id": "773fa108b71437d5fa1208e023ec847e98b5f3cb",
+  "ref": "Galil K, 2002",
+  "status": "Ok",
+  "assigned_to": "JT",
+  "vaccine": "Varivax",
+  "design": "outbreak investigation cohort study",
+  "comparison": "Vaccinated versus unvaccinated",
+  "n_participants": "115",
+  "age": "12 months and older",
+  "unit_intervention": "Vaccinated",
+  "n_intervention": "80",
+  "unit_control": "Unvaccinated",
+  "n_control": "20",
+  "country": "United States",
+  "data_from": "day-care center outbreak investigation (parent questionnaires and health care provider records), Pennsylvania",
+  "period": "November 1, 1999 to April 9, 2000",
+  "outcomes": [
+    {"kind": "disease", "measured_as": "varicella (pruritic maculopapulovesicular rash)",
+     "measured_as_es": "varicela (exantema pruriginoso maculopapulovesicular)",
+     "measure": "VE", "dose1": {"point": 79, "lo": 66, "hi": 88}},
+    {"kind": "severe", "measured_as": "moderate or severe varicella (more than 50 lesions or serious complications)",
+     "measured_as_es": "varicela moderada o grave (más de 50 lesiones o complicaciones graves)",
+     "measure": "VE", "dose1": {"point": 95, "lo": 84, "hi": 98}}
+  ],
+  "es": {
+    "design": "estudio de cohorte de investigación de brote",
+    "country": "Estados Unidos",
+    "data_from": "una investigación de brote en una guardería (cuestionarios a los padres y registros de los proveedores de salud), Pensilvania",
+    "period": "1 de noviembre de 1999 a 9 de abril de 2000"
+  },
+  "confidence": {"vaccine": "high", "outcomes": "high"},
+  "flags": [],
+  "text_quality": "full"
+}

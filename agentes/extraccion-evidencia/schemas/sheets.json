@@ -1,0 +1,32 @@
+{
+  "_nota": "IDs verificados el 2026-10-28. Si una planilla se copia o cambia, actualizar aquí y avisar.",
+  "extraction_sheet": {
+    "name": "[Vacunas_2026] Data extraction sheet for updates",
+    "id": "1HR1gwLKPmeZzJlTANbaRDwO2BkpsfFyH_bc2aldoHfs",
+    "tabs": {
+      "Effectiveness": {"sheetId": 1290642341, "header_row": 1, "agent_columns": ["C:D", "I:AM"], "formula_columns": "AN:AY"},
+      "Post_authorization_safety": {"sheetId": 1143188798, "header_row": 1, "note": "ver docs/planillas/extraccion_post_auth_safety.md"},
+      "Immunogenicity": {"sheetId": 1990986245},
+      "Efficacy": {"sheetId": 975072314},
+      "Criterios de elegibilidad": {"sheetId": 1380680299}
+    }
+  },
+  "tables_sheet_default": {
+    "name": "[Vacunas_2026] Información regulatoria y tablas de efectos",
+    "id": "1c3AlX5qPMxZTo55zsSEVTuC-C2m8mocgwyftxdy4Dus",
+    "tab": "Tablas_capa_1",
+    "sheetId": 1851227287,
+    "columns": "A:K"
+  },
+  "tables_sheet_previous": {
+    "name": "[Vacunas_2025] Información regulatoria y tablas de efectos",
+    "id": "1oX9SnslpAYXcnIhaJlf35FZIk1ysjdBAayXNbHI6daY",
+    "tab": "Tablas_capa_1",
+    "sheetId": 1851227287,
+    "note": "usar solo si el usuario lo pide"
+  },
+  "drive": {
+    "varicela_pdfs_folder": "1A4KJhJ30vdx7uv3plzvNwBN_utpgrTPq"
+  },
+  "publication": "https://vaccines-pharmacovigilance.paho.org/en"
+}

@@ -1,0 +1,24 @@
+# Casos resueltos (ejemplos modelo)
+
+Ejemplos cortos que el `extractor` puede consultar. Los datos completos están en las planillas.
+
+## Effectiveness — varicela (primera corrida, 2026-10-28)
+
+| Episte ID (inicio) | Estudio | Resultado | Por qué |
+|---|---|---|---|
+| 773fa108 | Galil 2002, brote en guardería | Ok. VE 79 % (66-88) enfermedad; 95 % (84-98) moderada/grave | Nombra Varivax; cohorte con no vacunados; IC en el texto. Fixture: `tools/tests/galil_648.json` |
+| 29bd394c | Gould 2009, brote en escuela | Ok. VE 1 dosis 85,4; 2 dosis 89,1; grave 100 % | VE contra tasa histórica de no vacunados: lo dice la tabla |
+| 9cc8255c | Baxter 2013, cohorte prospectiva | Ok. VE 90 % sin IC | "95% CI: Not reported"; dos referencias históricas |
+| c8495f07 | Staat 2006, Ohio | Ok. IRR 66 (urgencias) y 65 (hospital) | Antes/después; RR 2,9 con IC en el texto de la tabla |
+| f9611a52 | Seward 2002, 3 comunidades | Ok. 71 / 84 / 79 % en una celda | Varios resultados -> una celda multilínea (col. X) |
+| 94ba53db | Reynolds 2008, VASP | Ok. IRR 76 hospitalización | Incluye OR ajustado de no vacunados en el texto |
+| 306e5205, 0c08a304, 0835f899, 9e3f8083 | Leung 2015 x2, Marin 2022 x2 | Excluded | Producto no nombrado; períodos que llegan a 2008-2019 (MMRV) |
+| 64fba5a7 | Sheffer 2005, Israel | Excluded | Vacuna Varilrix, fuera de la lista |
+| feb9d3c5 | Clements 1999 | Waiting | Solo resumen; nota en D |
+
+## Referencias de formato en la planilla (filas `Published`)
+
+- Antes/después con reducción: fila de Gentile A (Abrysvo): `IRR 34.9 (16.9 - 49.0)`, tabla `Reduction in hospitalization rate:\nIRR: 34.9% (95% CI: 16.9 - 49.0)`.
+- VE con IC: Luhm KR (Dengvaxia): VE 17,5 % (12,9-21,9) primera dosis y 24,3 % (20,1-28,2) segunda.
+- Seguridad comparativa: Dag Berild J 2022 (BNT162b2, SCCS): evento `Thrombosis with thrombocytopenia syndrome`, medida `Rate ratio`, 1.04 (0.88 - 1.23), comparación pre/post.
+- Seguridad no comparativa: Otero-Losada M 2023 (BNT162b2): `The study described a disproportionality analysis of ... using data from Medicines and Healthcare Products Regulatory Agency`; `The study reported Guillain-Barré Syndrome incidence was 1.3 per million doses`.

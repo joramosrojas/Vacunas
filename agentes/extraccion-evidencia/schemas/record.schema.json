@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Registro de extracción (salida del extractor)",
+  "type": "object",
+  "required": ["type", "episte_id", "ref", "status"],
+  "properties": {
+    "type": {"enum": ["effectiveness", "safety_comparative", "safety_noncomparative"]},
+    "episte_id": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "ref": {"type": "string", "description": "Autor, año. Ej: 'Gould PL, 2009'"},
+    "status": {"enum": ["Ok", "Waiting", "Excluded"]},
+    "status_note": {"type": "string", "description": "Obligatoria si status != Ok. Español, 1-2 frases."},
+    "assigned_to": {"type": "string", "default": "JT"},
+    "vaccine": {"type": "string", "description": "Valor de la lista o vacío"},
+    "design": {"type": "string"},
+    "comparison": {"type": "string"},
+    "n_participants": {"type": "string"},
+    "age": {"type": "string"},
+    "unit_intervention": {"type": "string"},
+    "n_intervention": {"type": "string"},
+    "unit_control": {"type": "string"},
+    "n_control": {"type": "string"},
+    "country": {"type": "string"},
+    "data_from": {"type": "string"},
+    "period": {"type": "string"},
+    "variant": {"type": "string"},
+    "outcomes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "kind": {"enum": ["disease", "severe"], "description": "solo effectiveness"},
+          "event": {"type": "string", "description": "solo seguridad comparativa; valor de la lista"},
+          "measured_as": {"type": "string"},
+          "measured_as_es": {"type": "string"},
+          "ecological": {"type": "boolean", "description": "true usa 'Disease occurrence was measured as'"},
+          "measure": {"type": "string"},
+          "dose1": {"$ref": "#/$defs/estimate"},
+          "dose2": {"$ref": "#/$defs/estimate"},
+          "results_text": {"type": "string", "description": "Texto libre en inglés (varias líneas). Reemplaza el texto automático."},
+          "results_text_es": {"type": "string"}
+        }
+      }
+    },
+    "noncomparative": {
+      "type": "object",
+      "properties": {"described": {"type": "string"}, "reported": {"type": "string"}}
+    },
+    "es": {
+      "type": "object",
+      "description": "Campos en español que no se pueden derivar por código",
+      "properties": {
+        "design": {"type": "string"},
+        "population": {"type": "string"},
+        "groups": {"type": "array", "items": {"type": "string"}},
+        "country": {"type": "string"},
+        "data_from": {"type": "string"},
+        "period": {"type": "string"},
+        "age": {"type": "string"}
+      }
+    },
+    "confidence": {"type": "object", "additionalProperties": {"enum": ["high", "medium", "low"]}},
+    "flags": {"type": "array", "items": {"type": "string"}},
+    "text_quality": {"enum": ["full", "abstract_only", "none"]}
+  },
+  "$defs": {
+    "estimate": {
+      "type": "object",
+      "properties": {"point": {"type": ["number", "string"]}, "lo": {"type": ["number", "string"]}, "hi": {"type": ["number", "string"]}}
+    }
+  }
+}
