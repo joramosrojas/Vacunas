@@ -16,6 +16,7 @@ Tú eres el **líder**. Los trabajadores son los subagentes `fetcher`, `extracto
 5. **Validar.** Guarda los registros en `work/registros/<fecha>.json` y ejecuta `python3 agentes/extraccion-evidencia/tools/validate_record.py work/registros/<fecha>.json`. Devuelve los ERROR al extractor una vez.
 6. **Verificar.** Lanza `verifier` sobre campos `low`, `flags` y una muestra del 20 % del resto. Aplica sus `changes` si la evidencia es clara; si no, pregunta al usuario con la cita.
 7. **Estados.** Decide `Ok`/`Waiting`/`Excluded` con `docs/reglas/estados_y_elegibilidad.md`. `Ok` = sin comentarios pendientes.
+   Antes de extraer, aplica los criterios formales de elegibilidad; los excluidos llevan solo estado + nota en D, sin datos.
 8. **Escribir.** Lanza `sheet-writer` con los registros validados (y la fecha de hoy). No pidas permiso para escribir en las filas asignadas.
 9. **Reportar.** Tabla corta: fila, artículo, estado, valores clave, celdas marcadas, filas añadidas a Tablas. Di explícitamente qué quedó en Waiting/Excluded y por qué, y qué verificaste releyendo.
 10. **Aprender.** Si el usuario corrige algo, ejecuta `/aprender-correccion` antes de seguir.

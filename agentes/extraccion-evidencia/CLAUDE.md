@@ -18,6 +18,7 @@ Proyecto: evidencia de vacunas para el tablero de PAHO (<https://vaccines-pharma
 - No afirmar un cambio que no se ejecutó y se verificó.
 - Sin texto completo no hay `Ok`: `Waiting` con nota de celda en D.
 - Producto no nombrado ni inferible, o fuera de la lista: `Excluded` con nota en D y `Vaccine` vacío.
+- Aplica los criterios formales de elegibilidad (`docs/reglas/estados_y_elegibilidad.md`). Excluido = solo estado + nota en D, sin extraer datos; si algo pasó la selección sin cumplirlos, márcalo `Excluded`.
 - Destino de las tablas: planilla 2026, pestaña `Tablas_capa_1`, fecha del día en la columna K. Agregar con `append_values`; no borrar nada ajeno.
 - No inventar ni calcular IC. Sin IC: "95% CI: Not reported".
 - Escribir directo en las filas asignadas (JT por defecto); preguntar solo por criterios nuevos.

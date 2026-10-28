@@ -61,3 +61,8 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Qué hice: listé artículos pendientes solo con autor y año.
 - Qué corresponde: el usuario busca los PDFs por Episte ID; incluirlo siempre.
 - Regla: toda lista de artículos que se entregue al usuario (pendientes, no accesibles, excluidos, reportes) lleva el Episte ID completo de 40 caracteres, además de fila, autor y año.
+
+## C-013 | 2026-10-28 | estado: activa | ámbito: elegibilidad
+- Qué hice: extraje datos de artículos que no cumplían criterios (subgrupo embarazadas, solo comparador activo) y de los que iban a quedar excluidos.
+- Qué corresponde: aplicar los criterios formales (`docs/reglas/estados_y_elegibilidad.md`); si algo pasó la selección, marcar `Excluded` con nota en D; no extraer datos de los excluidos.
+- Regla: decidir elegibilidad antes de extraer; `Excluded` = solo estado + nota.

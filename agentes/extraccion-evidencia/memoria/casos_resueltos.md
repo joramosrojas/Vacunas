@@ -31,3 +31,8 @@ Ejemplos cortos que el `extractor` puede consultar. Los datos completos están e
 | 3c93de97 | Weinmann 2019, herpes zóster en niños | Excluded, comparativa | No nombra el producto y el período 2003-2014 incluye MMRV. El evento (herpes zóster) no está en la lista de desenlaces: `NA` y descripción en "measured as" |
 
 Aprendido: en seguridad comparativa sin estimador de razón (solo tasas) la planilla no tiene dónde poner el resultado; queda en el registro JSON y, si pasa a Ok, hace falta decidir cómo representarlo.
+
+## Seguridad post-autorización varicela (filas 590-602, lote 2)
+- Ok (no comparativa, farmacovigilancia pasiva): Galea 844eaf59055d0f4325d6c12a37ef4086453107b6, Chaves d9785f064d539608aefc797308c1abfda04c3f83, Wise 6b9a83fb96f5d6507e165cc46f662ee0f2392cc4, Moro ca8c2d8f7693e3a4b1b1255252bcc5c1b242cb49, Sharrar 9659e8eace5b6b27e567a1822e54f6fd176a13f5, Goulleret 371725e1dc0f58e823ee07c7aedd2a8155727082.
+- Excluded: Willis 4917825de9f606ddbf753fb150655bbae52baa88 (embarazadas), Klein 76cc7af0edf25bc707f8bdce592f108eb7c97345 (solo comparador activo), Liu 057732d07d6325cafe4a88c86ee940ddc4b72b9d (producto), Weinmann 6c5f193f6cf2557525859ce7f83b66dc2e34fa8e / 7038eaf0add74c8ca56c90e62d8552390105a5fb / 3c93de97d81cd49203708559e046e61877532f57.
+- Países: Galea "Worldwide", Goulleret "Europe"; Sharrar "United States" inferido; Galea tiene 55,7 M dosis en Resultados vs "155 million" en Discusión (se usó 55,7 M).
