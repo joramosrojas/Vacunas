@@ -17,7 +17,9 @@
     "Ixchiq": "Ixchiq chikungunya vaccine",
     "Qdenga (TAK-003)": "Qdenga",
     "SKYVaricella": "SKYVaricella varicella vaccine",
-    "Varivax": "Varivax varicella vaccine"
+    "Varivax": "Varivax varicella vaccine",
+    "Vimkunya (CHK VLP)": "Vimkunya chikungunya vaccine",
+    "VIMKUNYA (CHIKV VLP)": "Vimkunya chikungunya vaccine"
   },
   "comparison": {
     "effectiveness": ["Vaccinated versus unvaccinated", "Pre-vaccination period versus post-vaccination period"],
