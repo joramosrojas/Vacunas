@@ -66,3 +66,18 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Qué hice: extraje datos de artículos que no cumplían criterios (subgrupo embarazadas, solo comparador activo) y de los que iban a quedar excluidos.
 - Qué corresponde: aplicar los criterios formales (`docs/reglas/estados_y_elegibilidad.md`); si algo pasó la selección, marcar `Excluded` con nota en D; no extraer datos de los excluidos.
 - Regla: decidir elegibilidad antes de extraer; `Excluded` = solo estado + nota.
+
+## C-014 | 2026-10-28 | estado: activa | ámbito: planillas
+- Qué hice: usé "Contracting varicella" como Outcome en Clinical efficacy.
+- Qué corresponde: Outcome genérico, igual que en Effectiveness.
+- Regla: en Tablas_capa_1, Outcome = `Contracting disease` / `Contracting severe disease` para toda enfermedad que no sea COVID (también en Clinical efficacy).
+
+## C-015 | 2026-10-28 | estado: activa | ámbito: effectiveness
+- Qué hice: dejé EV/RR sin estimar cuando un grupo tenía 0 eventos (fórmula de la planilla con #NUM!).
+- Qué corresponde: aplicar la corrección de continuidad de RevMan (sumar 0,5 a cada celda del 2x2) y decirlo en la celda.
+- Regla: con cero eventos en un grupo, calcular RR e IC (log RR, error estándar con 0,5 en las 4 celdas), EV = 1 - RR, y agregar la línea "0.5 added to each cell (zero events in the ... group)". Solo con cero eventos; si no, usar lo que da la planilla o el artículo.
+
+## C-016 | 2026-10-28 | estado: activa | ámbito: planillas
+- Qué hice: tomé "varivax" literalmente y dejé fuera SKYVaricella.
+- Qué corresponde: "lo de varivax" = toda la vacuna de varicela (Varivax y SKYVaricella), en todas las pestañas (Effectiveness, Efficacy, Immunogenicity, Post_authorization_safety).
+- Regla: al pedir una vacuna por nombre, revisar todas las pestañas y las marcas de la misma enfermedad; solo pasan a Tablas_capa_1 las filas `Ok`.
