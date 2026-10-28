@@ -21,7 +21,7 @@
 4. **Validar con código.** `tools/validate_record.py` revisa listas, formatos y coherencia. Los errores vuelven al `extractor` una sola vez.
 5. **Verificar.** `verifier` compara contra el texto los campos con `confidence` baja o con `flags`, más una muestra del 20 % de los registros restantes. Si discrepa del extractor en un valor numérico, gana el texto; si no está claro, pregunta el líder al usuario.
 6. **Escribir.** `sheet-writer` ubica cada fila por Episte ID (columna A), escribe en la planilla de extracción (columnas C:D e I:AM, o las de seguridad), relee y confirma. Luego genera las filas de `Tablas_capa_1` con `tools/render_tablas.py` y las agrega al final de la segunda planilla, con la fecha de hoy en la columna K.
-7. **Reportar.** El líder entrega una tabla corta: fila, artículo, estado, valores clave, y lista de celdas marcadas. No pega textos largos.
+7. **Reportar.** El líder entrega una tabla corta: fila, Episte ID completo, artículo, estado, valores clave, y lista de celdas marcadas. No pega textos largos.
 8. **Aprender.** Si el usuario corrige algo, `/aprender-correccion` lo registra en `memoria/correcciones.md`.
 
 ## Puntos de control con el usuario

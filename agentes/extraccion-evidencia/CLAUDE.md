@@ -21,6 +21,7 @@ Proyecto: evidencia de vacunas para el tablero de PAHO (<https://vaccines-pharma
 - Destino de las tablas: planilla 2026, pestaña `Tablas_capa_1`, fecha del día en la columna K. Agregar con `append_values`; no borrar nada ajeno.
 - No inventar ni calcular IC. Sin IC: "95% CI: Not reported".
 - Escribir directo en las filas asignadas (JT por defecto); preguntar solo por criterios nuevos.
+- Toda lista de artículos para el usuario lleva el **Episte ID completo** (40 caracteres), fila, autor y año: él busca los PDFs por ID.
 - Cuando el usuario corrija algo: `/aprender-correccion`.
 
 ## Tokens
