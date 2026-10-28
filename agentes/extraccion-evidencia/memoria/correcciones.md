@@ -86,3 +86,18 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Qué hice: pasé a la tabla datos de Varis tal como estaban en la planilla (Varivax, USA, 72 % agrupado, placebo "64") sin contrastarlos con el artículo.
 - Qué corresponde: verificar producto, país, seguimiento y población contra el texto antes de pasar a Tablas_capa_1; usar las estimaciones que reporta el artículo por grupo, no agrupar brazos de distinta formulación.
 - Regla: con el texto disponible, contrastar producto, país, seguimiento, N analizado y estimaciones por brazo antes de escribir en Tablas_capa_1.
+
+## C-018 | 2026-10-28 | estado: activa | ámbito: planillas
+- Qué hice: separé en dos filas de Tablas_capa_1 los subgrupos por edad (60-74 y 75 o más) del mismo estudio y desenlace.
+- Qué corresponde: una sola fila, con grupo `Older adults`, y en las celdas de participantes (E, H) y resultados (G, J) un bloque por subgrupo de edad.
+- Regla: en Tablas_capa_1, una fila por estudio, desenlace y grupo. Los subgrupos por edad van juntos en `Older adults`, con un bloque por rango de edad en E, G, H y J.
+
+## C-019 | 2026-10-28 | estado: activa | ámbito: planillas
+- Qué hice: agregué dos filas con el mismo Outcome y grupo para desenlaces solapados del mismo estudio (hospitalización por enfermedad respiratoria, primaria, y por enfermedad respiratoria baja, secundaria).
+- Qué corresponde: dejar solo el análisis principal.
+- Regla: si dos desenlaces del mismo estudio caen en el mismo Outcome y grupo, dejar solo el del análisis principal (desenlace primario).
+
+## C-020 | 2026-10-28 | estado: activa | ámbito: planillas
+- Qué hice: dejé en Tablas_capa_1 filas que citaban el preprint de un estudio ya publicado.
+- Qué corresponde: reemplazar el preprint por el artículo de revista (misma cita y Episte ID del artículo publicado) y dejar el preprint con estado `Preprint`.
+- Regla: si hay versión publicada, la tabla cita la revista; la fila del preprint pasa a `Preprint`.
