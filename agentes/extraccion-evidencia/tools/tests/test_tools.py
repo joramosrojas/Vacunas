@@ -58,6 +58,17 @@ class Tools(unittest.TestCase):
         self.assertEqual(age_es("5 years or younger"), "5 años o menos")
         self.assertEqual(age_es("18 to 65 years"), "18 a 65 años")
 
+    def test_noncomparative_row(self):
+        rec = {"type": "safety_noncomparative", "episte_id": "ca8c2d8f7693e3a4b1b1255252bcc5c1b242cb49",
+               "ref": "Moro PL, 2022", "status": "Ok", "vaccine": "Varivax", "country": "United States",
+               "n_participants": "132,763,998",
+               "noncomparative": {"participants_label": "doses distributed", "described": "a study.", "reported": "40,684 reports"},
+               "es": {"noncomparative_f": "texto en español"}}
+        row = R.render(rec, "28 Octubre 2026")[0]
+        self.assertEqual(row[2:4], ["Non-comparative", "Overall"])
+        self.assertTrue(row[5].startswith("132,763,998 doses distributed\n\nNon-comparative study\nUnited States"))
+        self.assertEqual((row[6], row[9]), ("NA", "N / A"))
+
     def test_only_ok_rows_are_rendered(self):
         import subprocess
         p = FIX / "_excluded_tmp.json"

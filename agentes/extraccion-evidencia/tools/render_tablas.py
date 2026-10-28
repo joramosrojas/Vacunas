@@ -146,7 +146,8 @@ def render(rec, fecha):
         n = rec.get("n_participants", "")
         ref = f"[{rec['ref']}]\n\n[{rec['episte_id']}]"
         e = ref
-        f = (f"{n} participants\n\nNon-comparative study\n{rec['country']}\n\n"
+        label = nc.get("participants_label", "participants")
+        f = (f"{n} {label}\n\nNon-comparative study\n{rec['country']}\n\n"
              f"The study described {nc['described']}\n\nThe study reported {nc['reported']}")
         es = rec.get("es", {})
         h = ref
