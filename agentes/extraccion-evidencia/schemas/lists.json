@@ -3,7 +3,7 @@
   "status": ["Ok", "Pending", "Waiting", "Preprint", "Excluded", "Published", "Repetido", "OkA"],
   "agent_allowed_status": ["Ok", "Waiting", "Excluded"],
   "assigned_to": ["JT", "SF", "CV", "SP", "AMR", "FC", "FN"],
-  "vaccine": ["BNT162b2", "BNT162b2 bivalent", "Spikevax/Moderna COVID-19 vaccine", "Sinovac", "Novavax", "MMR", "Dengvaxia", "MVA-BN", "Abrysvo", "Ixchiq", "Qdenga (TAK-003)", "SKYVaricella", "Varivax"],
+  "vaccine": ["BNT162b2", "BNT162b2 bivalent", "Spikevax/Moderna COVID-19 vaccine", "Sinovac", "Novavax", "MMR", "Dengvaxia", "MVA-BN", "Abrysvo", "Ixchiq", "Qdenga (TAK-003)", "SKYVaricella", "Varivax", "Gardasil 4", "Gardasil 9"],
   "vaccine_display": {
     "BNT162b2": "Comirnaty/Pfizer-BNT162b2 COVID-19 vaccine",
     "BNT162b2 bivalent": "Comirnaty/Pfizer-BNT162b2 COVID-19 vaccine",
@@ -18,6 +18,8 @@
     "Qdenga (TAK-003)": "Qdenga",
     "SKYVaricella": "SKYVaricella varicella vaccine",
     "Varivax": "Varivax varicella vaccine",
+    "Gardasil 4": "Gardasil 4 HPV vaccine",
+    "Gardasil 9": "Gardasil 9 HPV vaccine",
     "Vimkunya (CHK VLP)": "Vimkunya chikungunya vaccine",
     "VIMKUNYA (CHIKV VLP)": "Vimkunya chikungunya vaccine"
   },

@@ -10,6 +10,7 @@
 | 2026-10-28 | Asignado por defecto: `JT` | usuario | extracciones de varicela |
 | 2026-10-28 | Sin texto completo -> `Waiting` + nota en D | usuario | `docs/reglas/estados_y_elegibilidad.md` |
 | 2026-10-28 | VE contra no vacunado histórico (Gould, Baxter): se acepta como `Ok` y la tabla aclara el comparador | agente, pendiente de confirmar | `docs/reglas/effectiveness.md` |
+| 2026-10-28 | Se agregan `Gardasil 4` y `Gardasil 9` a la lista de vacunas; nombres de visualización provisorios `Gardasil 4/9 HPV vaccine` | usuario (lista) / agente (nombre, pendiente de confirmar) | `schemas/lists.json`, `docs/reglas/producto_vacuna.md` |
 
 Resultado de la primera corrida (varicela, 16 filas, Effectiveness): 10 Ok, 5 Excluded, 1 Waiting (ver `casos_resueltos.md`).
 

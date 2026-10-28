@@ -8,4 +8,9 @@
 4. Nunca adivinar por el nombre del fabricante que aparece solo en conflictos de interés o bibliografía.
 5. Ante duda, preguntar al usuario con la cita del texto.
 
+## VPH (Gardasil)
+- `Gardasil 4` = vacuna cuadrivalente (Gardasil, Silgard, 4vHPV, qHPV; tipos 6/11/16/18). `Gardasil 9` = nonavalente (Gardasil 9, Silgard 9, 9vHPV; tipos 6/11/16/18/31/33/45/52/58). Nombre de visualización provisorio: `Gardasil 4 HPV vaccine` / `Gardasil 9 HPV vaccine`.
+- Si el artículo dice solo "quadrivalent" o "9-valent" sin marca: se infiere Gardasil 4 / Gardasil 9 solo si la vacunación del estudio fue anterior a 2023 y no es India ni China (hay otros productos 4v y 9v: Cervavac, Cecolin 9, Walrinvax 9). En otro caso, `Excluded` con nota. Marcar `confidence` medium y flag `product_inferred`.
+- Bivalentes (Cervarix, Cecolin, Walrinvax) no están en la lista: `Excluded`. Si el estudio mezcla productos sin separarlos: `Excluded`.
+
 Al añadir una regla por país/período nueva, anotarla aquí y en `memoria/decisiones.md`.
