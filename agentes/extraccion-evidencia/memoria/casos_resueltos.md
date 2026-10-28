@@ -36,3 +36,10 @@ Aprendido: en seguridad comparativa sin estimador de razón (solo tasas) la plan
 - Ok (no comparativa, farmacovigilancia pasiva): Galea 844eaf59055d0f4325d6c12a37ef4086453107b6, Chaves d9785f064d539608aefc797308c1abfda04c3f83, Wise 6b9a83fb96f5d6507e165cc46f662ee0f2392cc4, Moro ca8c2d8f7693e3a4b1b1255252bcc5c1b242cb49, Sharrar 9659e8eace5b6b27e567a1822e54f6fd176a13f5, Goulleret 371725e1dc0f58e823ee07c7aedd2a8155727082.
 - Excluded: Willis 4917825de9f606ddbf753fb150655bbae52baa88 (embarazadas), Klein 76cc7af0edf25bc707f8bdce592f108eb7c97345 (solo comparador activo), Liu 057732d07d6325cafe4a88c86ee940ddc4b72b9d (producto), Weinmann 6c5f193f6cf2557525859ce7f83b66dc2e34fa8e / 7038eaf0add74c8ca56c90e62d8552390105a5fb / 3c93de97d81cd49203708559e046e61877532f57.
 - Países: Galea "Worldwide", Goulleret "Europe"; Sharrar "United States" inferido; Galea tiene 55,7 M dosis en Resultados vs "155 million" en Discusión (se usó 55,7 M).
+
+## Ensayos en Tablas_capa_1 (Efficacy / Immunogenicity), 2026-10-28
+- Weibel 1984 (`8072686f`, Varivax): 0 eventos en vacunados -> corrección de 0,5, solo `VE: 98.8% (95% CI: 79.9 - 99.9)` y `RR: 0.012 (95% CI: 0.001 - 0.201)`.
+- Varis 1996 (`d0d555eb`): planilla decía Varivax y USA; el artículo es Oka-RIT de GSK en Finlandia -> `Excluded`, filas fuera de la tabla.
+- Tindale (`26066d1a` preprint, `43438cf8` Lancet): la tabla cita la revista; el preprint queda `Preprint`.
+- Lassen 2026 (`3dd8beab`, Abrysvo, DAN-RSV): sin anticuerpos -> Immunogenicity `Excluded`; en la tabla desenlace primario `Contracting severe disease` y edades en una fila `Older adults`.
+- Simone 2025 (`3a4082d0`, Vimkunya): dosis de EE. UU. son vendidas (IQVIA), las de Alemania administradas; la frase de la planilla no coincidía con el artículo.
