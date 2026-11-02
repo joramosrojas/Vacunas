@@ -1,7 +1,7 @@
 {
   "_nota": "Fuente única de las listas de validación. Se actualiza solo cuando el usuario cambia la planilla (ver skills/entender-planilla).",
   "status": ["Ok", "Pending", "Waiting", "Preprint", "Excluded", "Published", "Repetido", "OkA"],
-  "agent_allowed_status": ["Ok", "Waiting", "Excluded"],
+  "agent_allowed_status": ["Ok", "Waiting", "Excluded", "Preprint"],
   "assigned_to": ["JT", "SF", "CV", "SP", "AMR", "FC", "FN"],
   "vaccine": ["BNT162b2", "BNT162b2 bivalent", "Spikevax/Moderna COVID-19 vaccine", "Sinovac", "Novavax", "MMR", "Dengvaxia", "MVA-BN", "Abrysvo", "Ixchiq", "Qdenga (TAK-003)", "SKYVaricella", "Varivax", "Gardasil 4", "Gardasil 9"],
   "vaccine_display": {
