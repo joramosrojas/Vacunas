@@ -34,3 +34,6 @@ Las tablas de Tablas_capa_1 se suben a la síntesis de SK (sección Report: Vacc
 
 ## 2026-10-28 | Weibel en Overall y subgrupo; versiones en español en SK
 Weibel (Varivax, ECA vs placebo en niños) queda con dos filas en Tablas_capa_1 (grupo `Children and adolescents` y copia `Overall`) y aparece en SK tanto en la tabla general como en la de subgrupos. Las síntesis en español (Vimkunya, Varivax, SKYVaricella) se cargan desde las columnas H:J con los títulos y mensajes de "no hay estudios" de las referencias en español (Ixchiq, MMR L-Zagreb, LC16m8). Los IDs de sección en español son distintos a los del inglés.
+
+## 2026-11-04 | Skill y herramienta de subida a SK
+Se creó `/subir-a-sk` (`skills/subir-a-sk`), `tools/sk_upload.py` (build/upload/inspect, con pruebas en `tools/tests/test_sk_upload.py`) y `docs/planillas/sk_platform.md`. La herramienta regenera exactamente las tablas ya publicadas de Varivax, Vimkunya y Gardasil 4 (inglés y español). El token de SK no se guarda: va en `SK_TOKEN`. La corrección de Weibel quedó como C-024 (C-021 ya existía en `main`).

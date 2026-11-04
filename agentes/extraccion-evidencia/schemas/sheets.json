@@ -28,5 +28,11 @@
   "drive": {
     "varicela_pdfs_folder": "1A4KJhJ30vdx7uv3plzvNwBN_utpgrTPq"
   },
+  "sk_platform": {
+    "app": "https://www.skplatform.org/app/syntheses/<UUID>/work",
+    "graphql": "https://api.skplatform.org/v1/graphql",
+    "auth": "variable de entorno SK_TOKEN (cookie sk:token del usuario); nunca guardarla",
+    "note": "ver docs/planillas/sk_platform.md y skills/subir-a-sk"
+  },
   "publication": "https://vaccines-pharmacovigilance.paho.org/en"
 }
