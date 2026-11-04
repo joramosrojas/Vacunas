@@ -65,7 +65,7 @@ def results_es(o, kind):
 
 def design_block_en(rec):
     lines = [cap(rec["design"])]
-    if rec.get("comparison"):
+    if rec.get("comparison") and rec["comparison"] != "NA":
         lines += ["", f"Comparison: {rec['comparison'][0].lower() + rec['comparison'][1:]}"]
     lines += ["", f"[{rec['ref']}]", f"[{rec['episte_id']}]", ""]
     n, age = rec.get("n_participants", ""), rec.get("age", "")
@@ -89,7 +89,7 @@ def design_block_es(rec):
     if not design:
         raise ValueError("falta es.design")
     lines = [cap(design)]
-    if rec.get("comparison"):
+    if rec.get("comparison") and rec["comparison"] != "NA":
         lines += ["", f"Comparación: {COMP_ES[rec['comparison']]}"]
     lines += ["", f"[{rec['ref']}]", f"[{rec['episte_id']}]", ""]
     n, age = rec.get("n_participants", ""), rec.get("age", "")
@@ -133,7 +133,7 @@ def country_block_es(rec, o):
     elif rec["type"] == "effectiveness":
         tail = f"Se consideró que una persona contrajo la enfermedad si presentó {o['measured_as_es']}."
     else:
-        tail = f"{o.get('event') or 'El desenlace'} se midió como {o['measured_as_es']}."
+        tail = f"{o.get('event_es') or o.get('event') or 'El desenlace'} se midió como {o['measured_as_es']}."
     return (f"{es['country']}\n\nDatos de {es['data_from']}.\n\nPeríodo de observación: {es['period']}.\n\n{tail}")
 
 
