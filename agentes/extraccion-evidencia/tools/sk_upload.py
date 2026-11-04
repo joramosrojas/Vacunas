@@ -5,6 +5,8 @@ Subcomandos (solo biblioteca estándar; el token va en la variable de entorno SK
 
   build   filas A:K de Tablas_capa_1 (JSON) -> documentos de las 4 secciones (JSON)
   upload  documentos -> síntesis de SK (referencias + reportes), con verificación
+  sync    agrega a una síntesis ya poblada SOLO los estudios nuevos (sin borrar nada, sin IDs duplicados)
+  check   revisa IDs duplicados y citas rotas de una síntesis (solo lectura)
   inspect muestra nombre, reportes y referencias de una síntesis
 
 Formato y reglas: docs/planillas/sk_platform.md. Uso paso a paso: skills/subir-a-sk/SKILL.md.
@@ -313,6 +315,24 @@ def derive_trials(rows, L):
     return list(found.values())
 
 
+def trial_block(L, t):
+    """Párrafos de un ensayo: nombre, registro y publicaciones."""
+    c = [P(T(L["trial"] + t["name"]))]
+    if t.get("registry"):
+        reg = t["registry"]
+        c.append(P(T(L["registry"]), link(reg, "https://clinicaltrials.gov/study/" + reg)
+                   if reg.startswith("NCT") else T(reg), T(".")))
+    if t.get("refs"):
+        inline = [T(L["pubs"])]
+        for j, rid in enumerate(t["refs"]):
+            if j:
+                inline.append(T(";"))
+            inline.append(REF(rid))
+        inline.append(T("."))
+        c.append(P(*inline))
+    return c
+
+
 def trials_doc(L, trials):
     if not trials:
         return {"type": "doc", "content": [P(T(L["e_trials"]))]}
@@ -321,23 +341,10 @@ def trials_doc(L, trials):
     phases.sort(key=lambda p: (p is None, str(p)))
     for ph in phases:
         c.append(heading(3, L["phase"].format(n=ph) if ph else L["phase_na"], bold=True))
-        sub = [t for t in trials if t.get("phase") == ph]
-        for i, t in enumerate(sub):
+        for i, t in enumerate(t for t in trials if t.get("phase") == ph):
             if i:
                 c.append(P())
-            c.append(P(T(L["trial"] + t["name"])))
-            if t.get("registry"):
-                reg = t["registry"]
-                c.append(P(T(L["registry"]), link(reg, "https://clinicaltrials.gov/study/" + reg)
-                           if reg.startswith("NCT") else T(reg), T(".")))
-            if t.get("refs"):
-                inline = [T(L["pubs"])]
-                for j, rid in enumerate(t["refs"]):
-                    if j:
-                        inline.append(T(";"))
-                    inline.append(REF(rid))
-                inline.append(T("."))
-                c.append(P(*inline))
+            c += trial_block(L, t)
     return {"type": "doc", "content": c}
 
 
@@ -576,6 +583,126 @@ def cmd_upload(a):
     if not ok:
         sys.exit("La verificación falló: revisa la síntesis antes de dar la carga por buena")
 
+def merge_module():
+    """sk_merge vive al lado de este archivo; con `python3 -I` el directorio del script no está en sys.path."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    if here not in sys.path:
+        sys.path.insert(0, here)
+    sys.modules.setdefault("sk_upload", sys.modules[__name__])
+    import sk_merge
+    return sk_merge
+
+
+def read_state(sid, secs):
+    d = gql("""query($s:uuid!){sk_syntheses_by_pk(id:$s){id name}
+      reports_synthesis_reports(where:{synthesis_id:{_eq:$s}}){id section_id updated_at content}
+      sk_synthesis_references(where:{synthesis_id:{_eq:$s}}){reference_id}}""", {"s": sid})
+    if not d["sk_syntheses_by_pk"]:
+        sys.exit("La síntesis no existe o no tienes acceso")
+    by = {r["section_id"]: r for r in d["reports_synthesis_reports"]}
+    return d, by, {k: (by[secs[k]]["content"] if secs[k] in by else None) for k in SECTION_ORDER}
+
+
+def cmd_sync(a):
+    """Agrega a la síntesis solo lo nuevo de Tablas_capa_1, sin borrar nada de lo que ya está."""
+    M = merge_module()
+    rows = json.load(open(a.rows, encoding="utf-8"))
+    trials = json.load(open(a.trials, encoding="utf-8")) if a.trials else None
+    if a.lang == "es" and not a.name:
+        sys.exit("En español hace falta --name, p. ej. «Vimkunya contra chikungunya»")
+    sid, secs = synthesis_id(a.synthesis), section_ids(a.lang)
+    d, by, existing = read_state(sid, secs)
+    try:
+        out, log, refs, warn = M.sync_plan(rows, a.vaccine, a.lang, a.name, trials, existing,
+                                           a.include_flagged, a.add_missing_tables, a.allow_empty)
+    except ValueError as e:
+        sys.exit(str(e))
+    print("Síntesis:", d["sk_syntheses_by_pk"]["name"])
+    print("\n".join(log))
+    for w in warn:
+        print("AVISO:", w)
+    have = {r["reference_id"] for r in d["sk_synthesis_references"]}
+    new_refs = [r for r in refs if r not in have]
+    print(f"\nSecciones a escribir: {len(out)}; referencias nuevas: {len(new_refs)}")
+    if not out:
+        print("Nada nuevo: la síntesis ya tiene todo lo que hay en las filas.")
+        return
+    if a.dry_run:
+        print("(dry-run: no se escribió nada)")
+        return
+    os.makedirs(a.backup_dir, exist_ok=True)
+    stamp = time.strftime("%Y%m%d-%H%M%S")
+    for k in out:
+        if existing[k] is not None:
+            path = os.path.join(a.backup_dir, f"sk_{sid[:8]}_{k}_{a.lang}_{stamp}.json")
+            json.dump(existing[k], open(path, "w", encoding="utf-8"), ensure_ascii=False)
+            print("copia de seguridad:", path)
+    if new_refs:
+        gql("mutation($o:[sk_synthesis_references_insert_input!]!){insert_sk_synthesis_references(objects:$o){affected_rows}}",
+            {"o": [{"synthesis_id": sid, "reference_id": r, "type": "references_manager_epistemonikos",
+                    "source": "epistemonikos", "type_identifier": r} for r in new_refs]})
+    failed = []
+    for k, doc in out.items():
+        if existing[k] is None:
+            gql("mutation($o:[reports_synthesis_reports_insert_input!]!){insert_reports_synthesis_reports(objects:$o){affected_rows}}",
+                {"o": [{"synthesis_id": sid, "section_id": secs[k], "content": doc}]})
+            continue
+        r = by[secs[k]]
+        n = gql("""mutation($id:uuid!,$ts:timestamptz!,$c:json!){update_reports_synthesis_reports(
+          where:{id:{_eq:$id},updated_at:{_eq:$ts}},_set:{content:$c}){affected_rows}}""",
+                {"id": r["id"], "ts": r["updated_at"], "c": doc})["update_reports_synthesis_reports"]["affected_rows"]
+        if n != 1:
+            failed.append(SECTIONS[k][a.lang])
+    if failed:
+        print("CONFLICTO: alguien editó estas secciones mientras tanto y no se tocaron:", ", ".join(failed),
+              "(vuelve a correr sync)")
+    # verificación: nada de lo anterior se perdió y lo nuevo está
+    d2, by2, after = read_state(sid, secs)
+    ok = not failed
+    for k, doc in out.items():
+        if SECTIONS[k][a.lang] in failed:
+            continue
+        got, before = after[k], existing[k]
+        lost = set(M.collect_refs(before or {})) - set(M.collect_refs(got or {}))
+        missing = set(M.collect_refs(doc)) - set(M.collect_refs(got or {}))
+        flag = "OK " if got and not lost and not missing and counts(got)["tablas"] >= counts(before or {})["tablas"] else "ERROR"
+        ok &= flag == "OK "
+        print(f"{flag} {SECTIONS[k][a.lang]}: {counts(got) if got else None}")
+        for rl, lead, sid_ in M.find_duplicates(got or {}):
+            print(f"AVISO ID duplicado en tabla {rl}: «{lead}» {sid_}")
+    if not ok:
+        sys.exit("La verificación falló: revisa la síntesis (hay copia de seguridad en " + a.backup_dir + ")")
+
+
+def cmd_check(a):
+    """Revisa IDs duplicados y citas rotas de una síntesis (solo lectura)."""
+    M = merge_module()
+    sid = synthesis_id(a.synthesis)
+    names = {s["id"]: s["name"] for s in gql("{reports_reports_section{id name}}")["reports_reports_section"]}
+    d = gql("""query($s:uuid!){sk_syntheses_by_pk(id:$s){name}
+      reports_synthesis_reports(where:{synthesis_id:{_eq:$s}}){section_id content}
+      sk_synthesis_references(where:{synthesis_id:{_eq:$s}}){reference_id}}""", {"s": sid})
+    print(d["sk_syntheses_by_pk"]["name"])
+    regs = [r["reference_id"] for r in d["sk_synthesis_references"]]
+    dup_regs = sorted({r for r in regs if regs.count(r) > 1})
+    cited, problems = set(), 0
+    for r in d["reports_synthesis_reports"]:
+        cited |= set(M.collect_refs(r["content"]))
+        for role, lead, rid in M.find_duplicates(r["content"]):
+            problems += 1
+            what = "" if role == "nc" else f"«{lead}» "
+            print(f"  DUPLICADO en «{names.get(r['section_id'], r['section_id'])}» ({role}): {what}{rid}")
+    for r in dup_regs:
+        problems += 1
+        print(f"  DUPLICADO en las referencias de la síntesis: {r} ({regs.count(r)} veces)")
+    for r in sorted(cited - set(regs)):
+        problems += 1
+        print(f"  CITA ROTA (no está en las referencias de la síntesis): {r}")
+    unused = sorted(set(regs) - cited)
+    print(f"  referencias registradas: {len(set(regs))}; citadas en reportes: {len(cited & set(regs))}; "
+          f"sin citar: {len(unused)}")
+    print("  Sin problemas." if not problems else f"  {problems} problema(s).")
+
 
 def main(argv=None):
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -597,6 +724,23 @@ def main(argv=None):
     u.add_argument("--only", help="Solo estas secciones, separadas por coma: trials,efficacy,safety,post")
     u.add_argument("--dry-run", action="store_true")
     u.set_defaults(fn=cmd_upload)
+    sy = sub.add_parser("sync", help="Agrega solo lo nuevo a una síntesis ya poblada, sin borrar nada")
+    sy.add_argument("--rows", required=True)
+    sy.add_argument("--vaccine", required=True)
+    sy.add_argument("--lang", choices=["en", "es"], default="en")
+    sy.add_argument("--name")
+    sy.add_argument("--trials")
+    sy.add_argument("--synthesis", required=True)
+    sy.add_argument("--allow-empty", action="store_true")
+    sy.add_argument("--include-flagged", action="store_true", help="Agrega también las filas «para revisar»")
+    sy.add_argument("--add-missing-tables", action="store_true",
+                    help="Si la sección no tiene una tabla del tipo, agrega la tabla estándar")
+    sy.add_argument("--backup-dir", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "work", "backups"))
+    sy.add_argument("--dry-run", action="store_true")
+    sy.set_defaults(fn=cmd_sync)
+    ck = sub.add_parser("check", help="IDs duplicados y citas rotas de una síntesis (solo lectura)")
+    ck.add_argument("synthesis")
+    ck.set_defaults(fn=cmd_check)
     i = sub.add_parser("inspect")
     i.add_argument("synthesis")
     i.set_defaults(fn=cmd_inspect)

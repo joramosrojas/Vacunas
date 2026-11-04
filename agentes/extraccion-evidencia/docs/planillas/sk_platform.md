@@ -53,6 +53,17 @@ Misma estructura con las columnas H:J. Títulos y mensajes tomados de las sínte
 
 Nombre = primera línea de la columna E; fase = `Phase N` en E (si falta, `Phase not reported`); publicaciones = Episte IDs de las filas del ensayo. **El NCT no siempre está en `Tablas_capa_1`** (en Vimkunya la columna E trae autor y año): sacarlo de las pestañas `Efficacy`/`Immunogenicity` de la planilla de extracción (columna NCT) y pasarlo con `--trials`. Ensayos sin artículo con resultados (registros `Excluded`) no se listan.
 
+## Actualización incremental (`sync`)
+
+La síntesis se va completando a medida que salen estudios; **solo se agrega**. Hay contenido subido antes de este sistema que no está en `Tablas_capa_1` ni en la planilla de extracción, así que nunca se reemplaza una sección (`upload --replace` queda para casos pedidos por el usuario).
+
+- **Qué hace.** Lee la sección existente, reconoce cada tabla por su título y encabezado (también en síntesis hechas a mano, inglés o español) y agrega las filas que faltan: a la tabla correspondiente, dentro del grupo del mismo desenlace (sube el `rowspan`) o como grupo nuevo al final, antes de las notas al pie. Lo único que se quita es la fila de «no hay estudios» de la tabla a la que llega un estudio. Los ensayos nuevos van a su fase (`Phase N`); una fase nueva se inserta en orden.
+- **Duplicados (revisión de IDs).** Es duplicado el mismo Episte ID con el mismo desenlace (o evento, o subgrupo) en la misma tabla; en no comparativos, el mismo Episte ID. Un estudio con otro desenlace es una fila nueva legítima. Se marca **«para revisar»** (y no se agrega salvo `--include-flagged`) cuando el estudio ya está con una etiqueta que no es de las estándar (tabla hecha a mano) o con un evento casi igual, o con distinto grupo. Las filas repetidas dentro de `Tablas_capa_1` (misma sección, desenlace, grupo e ID) se avisan y se usa la primera.
+- **Referencias.** Solo se registran las que faltan en la síntesis; `check` avisa de IDs duplicados en las referencias, citas rotas (citadas pero no registradas) y referencias sin citar.
+- **Seguridad de la escritura.** Copia de lo anterior en `work/backups/` (no se versiona), escritura condicionada a que nadie haya editado la sección desde que se leyó (si no, se deja sin tocar y se avisa), verificación posterior (ninguna cita perdida, tablas con estructura válida, sin duplicados) y, si la mezcla dejara una tabla mal formada, esa sección no se modifica.
+- **Limitaciones.** Una fila ya publicada no se corrige: si cambia el texto en `Tablas_capa_1` hay que editarlo en SK a mano. Los estudios nuevos de un mismo desenlace se agregan al final de su grupo, no en el orden de la planilla. Una tabla hecha a mano con otra estructura de columnas puede no reconocerse: en ese caso se avisa (`NO hay una tabla reconocible`) y no se agrega (`--add-missing-tables` agrega la tabla estándar al final de la sección).
+- **Leer pocas filas.** Basta con las filas nuevas (fecha de carga en la columna K); incluir de más no duplica.
+
 ## Riesgos
 
 - El token es la sesión del usuario: no guardarlo en archivos ni commits; se pasa por `SK_TOKEN` en cada sesión y expira.

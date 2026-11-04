@@ -1,33 +1,38 @@
 ---
 name: subir-a-sk
-description: Sube a la síntesis de una vacuna en SK Platform las tablas de efectos (eficacia, efectividad, seguridad, seguridad post-autorización y características de ensayos) desde Tablas_capa_1, en inglés o español. Úsalo cuando el usuario pida subir o actualizar tablas en SK o pase el enlace de una síntesis.
+description: Sube a la síntesis de una vacuna en SK Platform las tablas de efectos (eficacia, efectividad, seguridad, seguridad post-autorización y características de ensayos) desde Tablas_capa_1, en inglés o español, y las va actualizando agregando solo los estudios nuevos. Úsalo cuando el usuario pida subir o actualizar tablas en SK o pase el enlace de una síntesis.
 ---
 
-# Subir tablas de una vacuna a SK Platform
+# Subir y actualizar tablas de una vacuna en SK Platform
 
-Todo el formato y las reglas están en `docs/planillas/sk_platform.md`; léelo antes de la primera subida de la sesión. La herramienta es `tools/sk_upload.py` (`build` -> `upload`). Hablar con el usuario en español.
+Formato y reglas: `docs/planillas/sk_platform.md` (léelo antes de la primera subida de la sesión). Herramienta: `tools/sk_upload.py`. Hablar con el usuario en español.
+
+**Principio: solo se agrega.** Las síntesis tienen contenido subido antes de este sistema que no está en `Tablas_capa_1` ni en la planilla de extracción. Nunca se borra ni se reemplaza; cada vez se agregan los estudios nuevos y se revisan los IDs duplicados.
 
 ## Antes de empezar
 
-1. **Enlace de la síntesis** (URL o UUID) y su idioma. Nombre en el título de cada síntesis (`inspect`); si el usuario manda varios enlaces, identifica cuál es de qué vacuna e idioma por el nombre, no por el orden. Las síntesis "de referencia" que pase son modelos, no destinos.
-2. **Token.** Pídele al usuario el valor de la cookie `sk:token` (sesión abierta en skplatform.org) y exporta `SK_TOKEN` solo en el comando que lo usa. No lo escribas en archivos, commits ni mensajes. Si expiró, pide otro.
-3. **Qué hay ya en la síntesis**: `python3 tools/sk_upload.py inspect <URL>`. Si ya tiene reportes de efectos, pregunta antes de reemplazar.
+1. **Enlace de la síntesis** (URL o UUID) y su idioma. Confirma vacuna e idioma por el **nombre** de la síntesis (`inspect`), no por el orden en que llegan los enlaces. Las síntesis "de referencia" que pase el usuario son modelos, no destinos. Cada síntesis es de un producto (Gardasil 4 y 9, Varivax y SKYVaricella van aparte).
+2. **Token.** Pídele el valor de la cookie `sk:token` (sesión abierta en skplatform.org) y úsalo solo como `SK_TOKEN=... python3 ...`. No lo escribas en archivos, commits ni mensajes. Si expiró, pide otro.
+3. **Estado actual**: `python3 tools/sk_upload.py check <URL>` (solo lectura): IDs duplicados, citas rotas, referencias sin citar. Lo que ya venga mal no se corrige solo: se reporta.
 
 ## Pasos
 
-1. **Leer las filas** de la vacuna en `Tablas_capa_1` (columna A = nombre de visualización, `schemas/lists.json` `vaccine_display`). Ubica el rango leyendo solo A:B por tramos y luego `A:K` de ese rango (nunca la pestaña entera). Guarda las filas como JSON (lista de listas) en `work/rows_<vacuna>.json`.
-   - Para español, las columnas H:J deben estar llenas.
-   - Verifica que las filas sean de **esa** vacuna: Gardasil 4 y Gardasil 9, Varivax y SKYVaricella van en síntesis distintas.
-2. **Ensayos.** Si hay filas de Clinical efficacy / Safety / Immunogenicity, falta el NCT y la fase: léelos de `Efficacy`/`Immunogenicity` (planilla de extracción) y arma `work/trials_<vacuna>.json` = `[{"phase":"3","name":"...","registry":"NCT...","refs":["<Episte ID>"]}]`. Si no hay ensayos, no hace falta.
-3. **Construir**: `python3 tools/sk_upload.py build --rows work/rows_<v>.json --vaccine "<nombre en A>" --lang en --out work/sk_<v>_en.json [--trials ...] [--preview]`. En español agrega `--lang es --name "<Marca> contra <enfermedad>"`. Vacuna sin filas: `--allow-empty`. Lee los `AVISO`.
-4. **Probar**: `upload ... --dry-run` y revisa qué crea o reemplaza.
-5. **Subir**: `SK_TOKEN=... python3 tools/sk_upload.py upload --docs work/sk_<v>_<lang>.json --synthesis <URL>` (añade `--replace` y/o `--only efficacy,safety` solo si el usuario lo aprobó). La herramienta registra las referencias que faltan, crea los reportes y **relee para verificar** tablas y citas; si dice `ERROR`, no des la carga por buena.
-6. **Mirar el resultado** (opcional, recomendable la primera vez): abre la síntesis con Playwright y la cookie, pestañas de las cuatro secciones, y revisa que las citas salgan numeradas y no `[?]`.
-7. **Reportar** en una tabla corta: síntesis, idioma, secciones, filas por tabla, referencias nuevas, filas omitidas y por qué (otra vacuna, Booster...), y lo que quedó con tabla estándar.
+1. **Leer las filas de la vacuna** en `Tablas_capa_1` (columna A = nombre de visualización, `schemas/lists.json` `vaccine_display`).
+   - Ubica el rango leyendo solo A:B (o K, la fecha) por tramos; nunca la pestaña entera.
+   - Para **actualizar** basta leer las filas nuevas (fecha de la columna K posterior a la última subida, o las últimas de la vacuna): `sync` descarta lo que ya está por Episte ID, así que incluir filas de más no duplica nada.
+   - Una lectura grande de `get_values` queda **guardada en un archivo** (`.../tool-results/*.txt`, JSON `{range, values}`): procésala con Python (`json.load`) y guarda la lista de filas en `work/rows_<vacuna>.json`. No transcribas filas a mano.
+   - Español: las columnas H:J deben estar llenas.
+2. **Ensayos.** Si hay filas de Clinical efficacy / Safety / Immunogenicity falta el NCT: léelo de `Efficacy`/`Immunogenicity` (planilla de extracción) y arma `work/trials_<vacuna>.json` = `[{"phase":"3","name":"...","registry":"NCT...","refs":["<Episte ID>"]}]`. Sin ensayos, no hace falta.
+3. **Simular**: `python3 tools/sk_upload.py sync --rows work/rows_<v>.json --vaccine "<nombre en A>" --synthesis <URL> [--lang es --name "<Marca> contra <enfermedad>"] [--trials ...] --dry-run`. Lee el informe: `+` se agrega, `=` ya estaba, `?` **para revisar** (el estudio ya está en la tabla con una etiqueta que no se puede comparar; no se agrega salvo `--include-flagged`), `AVISO` (fila repetida en la planilla, ensayo sin NCT...). Muéstrale al usuario el resumen si hay `?` o algo inesperado.
+4. **Escribir**: el mismo comando sin `--dry-run`. La herramienta deja copia de lo que había en `work/backups/`, registra solo las referencias que faltan, agrega las filas (reemplaza únicamente la fila de «no hay estudios» de una tabla a la que llega un estudio), no pisa ediciones simultáneas (si alguien editó la sección mientras tanto, la deja sin tocar y avisa) y **relee para verificar**: ninguna cita anterior perdida, tablas íntegras, sin IDs duplicados. Si dice `ERROR` o `CONFLICTO`, no des la carga por buena.
+5. **Revisar**: `check <URL>` otra vez (debe quedar «Sin problemas»); una segunda corrida de `sync` debe decir «Nada nuevo». La primera vez, mira la síntesis con Playwright y la cookie (citas numeradas, no `[?]`).
+6. **Reportar** en una tabla corta: síntesis, idioma, filas agregadas por tabla, ya estaban, referencias nuevas, filas «para revisar» y avisos.
+
+Síntesis **vacía** (sin secciones de efectos) o vacuna sin filas: `sync` crea las secciones completas (con tablas estándar de «no hay estudios»); una vacuna sin ninguna fila exige `--allow-empty`. `upload` (build + upload) sigue disponible para cargar documentos ya armados; `--replace` solo si el usuario pide reemplazar.
 
 ## Reglas
 
-- No sobrescribir reportes existentes sin aprobación; no tocar secciones de información general.
-- Una fila de `Tablas_capa_1` que no esté en SK, o al revés, se reporta; no se corrige en silencio.
+- No sobrescribir ni borrar contenido existente; no tocar secciones de información general.
+- Una fila de `Tablas_capa_1` que no está en SK, o al revés, se reporta; no se corrige en silencio. Texto raro en la planilla (p. ej. «event not in list») se avisa al usuario: se arregla en la planilla y se vuelve a sincronizar (la herramienta no reescribe filas ya subidas: avisa y se corrige a mano en SK si hace falta).
 - Lo que el usuario corrija del formato: `/aprender-correccion` y actualizar `docs/planillas/sk_platform.md` y los textos de `LANG` en la herramienta.
-- Tras cambiar `tools/sk_upload.py`: `python3 -I -m unittest discover -s tools/tests`.
+- Tras cambiar `tools/sk_upload.py` o `tools/sk_merge.py`: `python3 -I -m unittest discover -s tools/tests`.
