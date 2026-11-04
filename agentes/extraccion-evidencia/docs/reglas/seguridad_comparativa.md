@@ -25,3 +25,4 @@ El estudio compara la frecuencia de un evento adverso entre vacunados y no vacun
 ## Flags
 
 Los mismos de effectiveness más `event_not_in_list`, `observed_expected`, `mixed_products`.
+- Seguridad: el desenlace nunca es "NA"; si falta en safety_outcomes se agrega a la lista (C-023). Registrar `event_es` en cada desenlace.

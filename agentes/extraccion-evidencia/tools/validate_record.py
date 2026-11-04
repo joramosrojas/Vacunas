@@ -62,8 +62,13 @@ def validate(rec):
                 errs.append(f"{tag}: kind debe ser 'disease' o 'severe'")
             measure_list = LISTS["effect_measure_effectiveness"]
         else:
-            if o.get("event") and o["event"] not in LISTS["safety_outcomes"]:
-                errs.append(f"{tag}: event '{o['event']}' fuera de la lista (usar NA y describir)")
+            ev = o.get("event")
+            if not ev or ev == "NA":
+                errs.append(f"{tag}: event vacío o 'NA'; usar el nombre real del desenlace (si falta en la lista, agregarlo a schemas/lists.json, C-023)")
+            elif ev not in LISTS["safety_outcomes"]:
+                errs.append(f"{tag}: event '{ev}' fuera de la lista (agregarlo a schemas/lists.json, no usar NA)")
+            elif not o.get("event_es"):
+                warns.append(f"{tag}: falta event_es (el texto en español de Tablas lo necesita)")
             measure_list = LISTS["effect_measure_safety"]
         if not o.get("measured_as"):
             errs.append(f"{tag}: falta measured_as")
