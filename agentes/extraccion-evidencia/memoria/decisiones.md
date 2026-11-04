@@ -15,6 +15,7 @@
 | 2026-10-28 | Comparador histórico (cohortes vs incidencia histórica) se acepta como `Ok` (Thamsborg, Kjaer, Lynge) | usuario | `docs/reglas/effectiveness.md` |
 | 2026-11-02 | Artículo con versión publicada y la fila corresponde al preprint: estado `Preprint` (el agente puede usarlo); no pasa a Tablas_capa_1. Aplica a Denecke 2019 | usuario | `schemas/lists.json` |
 | 2026-11-02 | Estudios de prevalencia sin estimador (Balgovind 2024) entran como `Ok` con los resultados en texto | usuario | `docs/reglas/effectiveness.md` |
+| 2026-11-04 | Excepción a C-019: en Brotherton 2011 (`cc74a5d12b5748757ecaef4c06523ec6b5ee82de`) el desenlace secundario LGA (anomalías de bajo grado) se mantiene en la misma fila de `Tablas_capa_1` que el principal HGA (`Contracting disease`, `Overall`), con dos bloques rotulados en G/J. No separar en dos filas | usuario | `Tablas_capa_1` (Gardasil 4), `docs/planillas/tablas_capa_1.md` |
 
 Resultado de la primera corrida (varicela, 16 filas, Effectiveness): 10 Ok, 5 Excluded, 1 Waiting (ver `casos_resueltos.md`).
 
