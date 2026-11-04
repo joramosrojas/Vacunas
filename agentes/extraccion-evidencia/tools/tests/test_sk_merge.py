@@ -126,6 +126,23 @@ class Merge(unittest.TestCase):
         self.assertNotIn("post", flagged)
         self.assertTrue(any("PARA REVISAR" in x for x in log2))
 
+    def test_spanish_event_label_and_match_with_english_leads(self):
+        c = [V, "Post-authorization safety", "Comparative", "Anaphylaxis", e("VSD", ID["4"], "Autor D, 2019"),
+             "United States\n\nObservation period: 2015.\n\nAnaphylaxis was measured as X.", "RR 0",
+             e("VSD", ID["4"], "Autor D, 2019"), "Estados Unidos\n\nPeríodo: 2015.\n\nAnafilaxia se midió como X.",
+             "RR 0", ""]
+        L = S.LANG["es"]
+        self.assertEqual(S.event_name(L, c), "Anafilaxia")
+        self.assertEqual(S.event_name(S.LANG["en"], c), "Anaphylaxis")
+        docs, *_ = S.build([c], V, "es", "X", trials=[])
+        self.assertEqual(M.scan(tables(docs["post"])[0])["rows"][2]["lead_first"], "anafilaxia")
+        # una síntesis subida antes con el evento en inglés no se duplica ni se parte en dos grupos
+        old = copy.deepcopy(docs)
+        lead = tables(old["post"])[0]["content"][2]["content"][0]["content"][0]["content"][0]
+        lead["text"] = "Anaphylaxis"
+        out, log, *_ = M.sync_plan([c], V, "es", "X", [], {**old, "trials": None})
+        self.assertNotIn("post", out)
+
     def test_noncomparative_by_id(self):
         existing = existing_from([NC])
         out, *_ = self.sync([NC], existing)

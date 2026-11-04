@@ -202,10 +202,11 @@ def row_status(info, role, r, L):
     if role == "nc":
         return "dup"
     oc = norm(r[3] if role == "comp" else S.label(L, "outcome", r[2]))
+    ocs = {oc, norm(S.event_name(L, r))} if role == "comp" else {oc}   # evento en inglés o traducido
     grp = norm(S.label(L, "group", r[3]))
     for ri in hits:
         if role in OUTCOME_ROLES:
-            match = ri["lead_first"] == oc
+            match = ri["lead_first"] in ocs
         elif role == "eff_sub":
             match = ri["lead_first"] == oc and grp in ri["lead_all"]
         else:  # saf_sub: el grupo va en la primera columna y el desenlace encabeza los resultados
@@ -215,7 +216,7 @@ def row_status(info, role, r, L):
                 return "flag"
             return "dup"
     if role == "comp":
-        return "flag" if any(similar(ri["lead_first"], oc) for ri in hits) else "new"
+        return "flag" if any(similar(ri["lead_first"], o) for ri in hits for o in ocs) else "new"
     if role in SUBGROUP_ROLES:
         return "new"
     return "new" if all(ri["lead_first"] in STANDARD for ri in hits) else "flag"
@@ -231,8 +232,12 @@ def render_groups(role, rows, L, refs):
                  cut(S.outcome_table(L, "", [r for r in rows if r[2] == oc], "", "", None, refs, order=[oc])))
                 for oc in S.ordered(rows, 2, pref)]
     if role == "comp":
-        return [(norm(ev), cut(S.comparative_table(L, "", [r for r in rows if r[3] == ev], refs)))
-                for ev in S.ordered(rows, 3, [])]
+        out = []
+        for ev in S.ordered(rows, 3, []):
+            sub = [r for r in rows if r[3] == ev]
+            out.append((frozenset({norm(ev), norm(S.event_name(L, sub[0]))}),
+                        cut(S.comparative_table(L, "", sub, refs))))
+        return out
     if role in SUBGROUP_ROLES:
         t = cut(S.outcome_table(L, "", rows, "", "", None, refs, subgroup="outcome" if role == "eff_sub" else "prefix"))
         return [(norm(S.label(L, "group", r[3])), [tr]) for r, tr in zip(rows, t)]
@@ -241,6 +246,7 @@ def render_groups(role, rows, L, refs):
 
 def insert_groups(table, role, groups):
     for key, new in groups:
+        keys = key if isinstance(key, frozenset) else {key}
         info = scan(table)
         rows = table["content"]
         whole = next((ri for ri in info["rows"] if ri and ri["whole"]), None)
@@ -249,7 +255,7 @@ def insert_groups(table, role, groups):
             info = scan(table)
         if role in OUTCOME_ROLES:
             hit = next((ri for ri in info["rows"] if ri and ri["has_lead"] and not ri["empty"]
-                        and ri["lead_first"] == key), None)
+                        and ri["lead_first"] in keys), None)
             if hit and hit["placeholder"]:           # fila «no hay estudios» de ese desenlace (inmunogenicidad)
                 remove_row(rows, hit["i"])
                 rows[hit["i"]:hit["i"]] = new

@@ -47,7 +47,7 @@ Títulos: `<Tipo> of the <Vacuna>`; en español `<Tipo> de la vacuna <Marca> con
 
 ## Español
 
-Misma estructura con las columnas H:J. Títulos y mensajes tomados de las síntesis de referencia en español (Ixchiq, MMR L-Zagreb, LC16m8): `Desenlace`, `Principales resultados`, `Eficacia*`, `Estudios comparativos`, `No se identificaron estudios que reporten la eficacia de la vacuna.`, `Contraer la enfermedad` / `Contraer la enfermedad severa`, `Niños y adolescentes`. El nombre en los títulos lo da `--name`.
+Misma estructura con las columnas H:J. Títulos y mensajes tomados de las síntesis de referencia en español (Ixchiq, MMR L-Zagreb, LC16m8): `Desenlace`, `Principales resultados`, `Eficacia*`, `Estudios comparativos`, `No se identificaron estudios que reporten la eficacia de la vacuna.`, `Contraer la enfermedad` / `Contraer la enfermedad severa`, `Niños y adolescentes`. El nombre en los títulos lo da `--name`. El **evento** de seguridad comparativa (columna D, siempre en inglés) se muestra traducido en la primera columna: se toma de la frase «<evento> se midió como…» de la columna I; si la planilla no lo tradujo (p. ej. «Appendicitis», porque el evento no estaba en la lista), queda en inglés. Al comparar con lo ya publicado se aceptan las dos formas.
 
 ## Ensayos (`trials`)
 

@@ -38,6 +38,7 @@ SAFETY_ORDER = ["Any adverse event", "Serious adverse events"]
 
 LANG = {
     "en": {
+        "lang": "en",
         "cols": (4, 5, 6),
         "hdr": ["Outcome", "Study design and number of participants",
                 "Country, follow-up and outcome definition", "Main results"],
@@ -68,6 +69,7 @@ LANG = {
         "grp_re": r"(Vaccine|Placebo) group:", "gmt": "Geometric mean titre",
     },
     "es": {
+        "lang": "es",
         "cols": (7, 8, 9),
         "hdr": ["Desenlace", "Diseño de estudio y número de participantes",
                 "País, seguimiento y definición del desenlace", "Principales resultados"],
@@ -223,6 +225,19 @@ def study_cells(r, L, where, prefix=None):
     return [cell(d), cell(country_cell(r[cf])), cell(results_cell(r[cg], L, prefix))], rid
 
 
+EVENT_SENTENCE = re.compile(r"(?:^|\n)([^\n]{3,90}?) se midió como", re.M)
+
+
+def event_name(L, r):
+    """Evento de seguridad comparativa (columna D, en inglés). En español se toma la forma traducida de la
+    frase «<evento> se midió como…» de la columna I; si no está, queda el nombre en inglés."""
+    if L["lang"] == "es" and len(r) > 8:
+        m = EVENT_SENTENCE.search(r[8] or "")
+        if m:
+            return m.group(1).strip()
+    return r[3]
+
+
 def label(L, kind, value):
     return L[kind].get(value, value)
 
@@ -289,7 +304,7 @@ def comparative_table(L, title, rows, refs):
         for i, r in enumerate(sub):
             cs, rid = study_cells(r, L, f"{r[0]}/{r[1]}/{ev}")
             refs.append(rid)
-            out.append(row(*([cell([P(T(ev, "bold"))], rowspan=len(sub))] if i == 0 else []), *cs))
+            out.append(row(*([cell([P(T(event_name(L, sub[0]), "bold"))], rowspan=len(sub))] if i == 0 else []), *cs))
     return table(*out)
 
 
