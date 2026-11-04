@@ -11,6 +11,7 @@ Proyecto: evidencia de vacunas para el tablero de PAHO (<https://vaccines-pharma
 
 ## Flujo
 `/extraer-evidencia` (ver `docs/flujo.md`): fetcher -> extractor (uno por artículo, en paralelo si son 3 o más) -> validar con código -> verifier -> sheet-writer -> reporte. Arquitectura y ahorro de tokens: `docs/arquitectura.md`.
+Subir las tablas a la síntesis de SK Platform: `/subir-a-sk` (formato en `docs/planillas/sk_platform.md`).
 
 ## Reglas que no se negocian
 - Listas de validación: valor exacto o vacío (`schemas/lists.json`). Correr `python3 tools/validate_record.py` antes de escribir.

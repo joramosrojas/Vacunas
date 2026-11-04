@@ -116,3 +116,8 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Qué hice: guardé "NA" como desenlace cuando el evento no estaba en `safety_outcomes`; el validador lo aceptó y Tablas copió "NA".
 - Qué corresponde: si el evento no está en la lista, agregarlo a `schemas/lists.json` (textual, sin reformatear con json.dump) y usar su nombre; nunca "NA" como desenlace en seguridad comparativa.
 - Regla: no escribir "NA" como evento; ampliar la lista, completar `event_es` y `population_en`/`es.population` si el texto de participantes sale roto, y revisar D de Tablas tras escribir.
+
+## C-024 | 2026-10-28 | estado: activa | ámbito: planillas
+- Qué hice: puse a Weibel (ECA vs placebo, niños de 1 a 14 años) en las tablas de subgrupos de la síntesis en SK, por tener grupo `Children and adolescents`.
+- Qué corresponde: un ECA que compara con placebo va siempre en las tablas generales (eficacia, seguridad, inmunogenicidad), aunque los participantes sean niños.
+- Regla: en SK, ECA vs placebo = tabla general; las tablas de subgrupos solo para análisis por subgrupo dentro de un estudio. Grupo `Overall` en Tablas_capa_1 para esos ECA.

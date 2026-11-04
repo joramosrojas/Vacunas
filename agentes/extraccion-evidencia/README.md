@@ -33,8 +33,8 @@ Destino final: pestaña `Tablas_capa_1` de la **segunda planilla** (`[Vacunas_20
 | `docs/planillas/` | Mapa de columnas y formatos de cada planilla (se leen solo cuando hacen falta) |
 | `docs/reglas/` | Reglas de extracción por tipo de estudio (se leen solo las del tipo en curso) |
 | `schemas/` | IDs de planillas, listas de validación, esquema del registro |
-| `tools/` | Scripts deterministas: validar registro y generar filas de `Tablas_capa_1` |
+| `tools/` | Scripts deterministas: validar registro, generar filas de `Tablas_capa_1` y subir las tablas a SK Platform (`sk_upload.py`) |
 | `agents/` | Subagentes: `fetcher`, `extractor`, `verifier`, `sheet-writer` |
-| `skills/` | `extraer-evidencia`, `aprender-correccion`, `entender-planilla` |
+| `skills/` | `extraer-evidencia`, `subir-a-sk`, `aprender-correccion`, `entender-planilla` |
 | `memoria/` | Correcciones del usuario, decisiones y casos resueltos (aprendizaje continuo) |
 | `work/` | Borradores y caché de textos (no se versiona) |
