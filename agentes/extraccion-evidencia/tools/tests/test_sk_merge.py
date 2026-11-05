@@ -92,8 +92,11 @@ class Merge(unittest.TestCase):
         dup = copy.deepcopy(A)
         dup[6] = "RR: 9.9 (95% CI: 9 - 10)"                       # mismo estudio y desenlace, otros números
         out, log, *_ = self.sync([dup], existing)
-        self.assertNotIn("safety", out)
-        self.assertTrue(any("ya estaba" in x for x in log))
+        self.assertNotIn("safety", out)                         # no se agrega como fila nueva ni se pisa sin pedirlo
+        self.assertTrue(any("CAMBIADA" in x for x in log))      # pero se informa que difiere de lo publicado
+        same, log2, *_ = self.sync([copy.deepcopy(A)], existing)
+        self.assertNotIn("safety", same)
+        self.assertTrue(any("ya estaba" in x for x in log2))
 
     def test_same_study_other_outcome_is_new(self):
         out, log, refs, _ = self.sync([A, B], existing_from([A]))
@@ -142,6 +145,51 @@ class Merge(unittest.TestCase):
         lead["text"] = "Anaphylaxis"
         out, log, *_ = M.sync_plan([c], V, "es", "X", [], {**old, "trials": None})
         self.assertNotIn("post", out)
+
+    def test_changed_row_is_reported_and_updated_on_request(self):
+        existing = existing_from([A, C])
+        edited = copy.deepcopy(A)
+        edited[6] = "RR: 9.9 (95% CI: 9.0 - 10.0)"
+        out, log, *_ = self.sync([edited, C], existing)
+        self.assertNotIn("safety", out)
+        self.assertTrue(any("CAMBIADA" in x and "resultados" in x and "no se actualiza" in x for x in log))
+        self.assertTrue(any("1 cambiadas en la planilla, 0 solo en SK" in x or "1 cambiadas" in x for x in log if x.startswith("RESUMEN")))
+        out2, log2, *_ = self.sync([edited, C], existing, update_changed=True)
+        flat = " ".join(texts(out2["safety"]))
+        self.assertIn("9.9 (95% CI: 9.0 - 10.0)", flat)
+        self.assertNotIn("1.1 (95% CI: 0.9 - 1.3)", " ".join(texts(tables(out2["safety"])[0]["content"][2])))
+        self.assertTrue(all(M.structure_ok(t) for t in tables(out2["safety"])))
+        self.assertEqual(M.collect_refs(out2["safety"]), M.collect_refs(existing["safety"]))
+        again, *_ = self.sync([edited, C], {**existing, **out2})
+        self.assertNotIn("safety", again)                        # ya consistente
+
+    def test_change_in_other_language_columns_is_ignored(self):
+        es = [V, "Safety", "Any adverse event", "Overall", e("T", ID["1"], "Autor A, 2024"),
+              "United States\n\nFollow up: 6 months.\n\nMeasured.", "RR: 1.1", e("T", ID["1"], "Autor A, 2024"),
+              "Estados Unidos\n\nSeguimiento: 6 meses.\n\nSe midió.", "RR: 1,1", ""]
+        docs, _, _ = S.build([es], V, "es", "X", trials=[])
+        existing = {**docs, "trials": None}
+        edited = list(es)
+        edited[9] = "RR: 2,2"                                  # cambio solo en el resultado en español
+        en_out, en_log, *_ = M.sync_plan([edited], V, "en", None, [], {**S.build([es], V, "en", trials=[])[0], "trials": None})
+        self.assertFalse(any("CAMBIADA" in x for x in en_log))
+        es_out, es_log, *_ = M.sync_plan([edited], V, "es", "X", [], existing, update_changed=True)
+        self.assertIn("2,2", " ".join(texts(es_out["safety"])))
+
+    def test_rows_only_in_sk_are_reported_never_removed(self):
+        existing = existing_from([A, C])
+        out, log, *_ = self.sync([A], existing)                  # la planilla ya no tiene la fila C
+        self.assertNotIn("safety", out)
+        self.assertTrue(any("SOLO EN SK" in x for x in log))
+        self.assertTrue(any("1 solo en SK" in x for x in log if x.startswith("RESUMEN")))
+
+    def test_noncomparative_text_change(self):
+        existing = existing_from([NC])
+        edited = list(NC)
+        edited[5] = NC[5].replace("1,000 doses", "2,500 doses")
+        out, log, *_ = self.sync([edited], existing, update_changed=True)
+        self.assertIn("2,500 doses", " ".join(texts(out["post"])))
+        self.assertTrue(any("CAMBIADA" in x and "texto" in x for x in log))
 
     def test_noncomparative_by_id(self):
         existing = existing_from([NC])

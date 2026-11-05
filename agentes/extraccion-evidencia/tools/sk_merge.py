@@ -9,6 +9,7 @@ Principios (ver docs/planillas/sk_platform.md):
     queda «para revisar» y no se agrega salvo que se pida (include_flagged).
   * Función pura: recibe y devuelve documentos; la red vive en sk_upload.py.
 """
+import collections
 import copy
 import json
 import re
@@ -187,8 +188,22 @@ def similar(a, b):
     return bool(a and b and (a in b or b in a or len(wa & wb) / max(1, len(wa | wb)) >= 0.5))
 
 
-def row_status(info, role, r, L):
-    """'new', 'dup' (ya está) o 'flag' (hay algo parecido que no puedo interpretar con certeza).
+def label_match(role, ri, r, L):
+    """¿La fila `ri` de la tabla de SK corresponde al desenlace/evento/subgrupo de la fila `r` de la planilla?"""
+    if role == "nc":
+        return True
+    oc = norm(r[3] if role == "comp" else S.label(L, "outcome", r[2]))
+    ocs = {oc, norm(S.event_name(L, r))} if role == "comp" else {oc}   # evento en inglés o traducido
+    grp = norm(S.label(L, "group", r[3]))
+    if role in OUTCOME_ROLES:
+        return ri["lead_first"] in ocs
+    if role == "eff_sub":
+        return ri["lead_first"] == oc and grp in ri["lead_all"]
+    return ri["lead_first"] == grp and ri["res_first"] == oc   # saf_sub: grupo en la 1.ª columna, desenlace en resultados
+
+
+def match_row(info, role, r, L):
+    """('new'|'dup'|'flag', fila de SK o None).
 
     Un mismo estudio puede estar en varias filas de una tabla con desenlaces o eventos distintos: eso es
     normal. Es duplicado cuando coinciden Episte ID y desenlace/evento (y subgrupo). Solo se pide revisión si
@@ -198,28 +213,52 @@ def row_status(info, role, r, L):
     sid = study_id(r)
     hits = [ri for ri in info["rows"] if ri and not ri["placeholder"] and sid in ri["ids"]]
     if not hits:
-        return "new"
+        return "new", None
     if role == "nc":
-        return "dup"
+        return "dup", hits[0]
     oc = norm(r[3] if role == "comp" else S.label(L, "outcome", r[2]))
-    ocs = {oc, norm(S.event_name(L, r))} if role == "comp" else {oc}   # evento en inglés o traducido
+    ocs = {oc, norm(S.event_name(L, r))} if role == "comp" else {oc}
     grp = norm(S.label(L, "group", r[3]))
     for ri in hits:
-        if role in OUTCOME_ROLES:
-            match = ri["lead_first"] in ocs
-        elif role == "eff_sub":
-            match = ri["lead_first"] == oc and grp in ri["lead_all"]
-        else:  # saf_sub: el grupo va en la primera columna y el desenlace encabeza los resultados
-            match = ri["lead_first"] == grp and ri["res_first"] == oc
-        if match:
+        if label_match(role, ri, r, L):
             if role in ("effect", "saf", "eff") and r[3] not in ("Overall",) and grp not in ri["text"]:
-                return "flag"
-            return "dup"
+                return "flag", ri
+            return "dup", ri
     if role == "comp":
-        return "flag" if any(similar(ri["lead_first"], o) for ri in hits for o in ocs) else "new"
+        return ("flag", hits[0]) if any(similar(ri["lead_first"], o) for ri in hits for o in ocs) else ("new", None)
     if role in SUBGROUP_ROLES:
-        return "new"
-    return "new" if all(ri["lead_first"] in STANDARD for ri in hits) else "flag"
+        return "new", None
+    return ("new", None) if all(ri["lead_first"] in STANDARD for ri in hits) else ("flag", hits[0])
+
+
+def row_status(info, role, r, L):
+    return match_row(info, role, r, L)[0]
+
+
+def study_cells_for(role, r, L):
+    """Celdas que SK debería mostrar para esta fila: las 3 de estudio (o la de texto en no comparativos)."""
+    if role == "nc":
+        return S.noncomparative_table(L, "", [r], [])["content"][2]["content"][-1:]
+    pref = S.label(L, "outcome", r[2]) if role == "saf_sub" else None
+    return S.study_cells(r, L, f"{r[0]}/{r[1]}/{r[2]}", pref)[0]
+
+
+def changed_parts(tr, new_cells):
+    """Qué partes de la fila publicada difieren del texto actual de la planilla (se compara el texto, no el formato)."""
+    old = tr.get("content", [])[-len(new_cells):]
+    names = ("diseño", "país/seguimiento", "resultados") if len(new_cells) == 3 else ("texto",)
+    return [n for n, x, y in zip(names, old, new_cells) if norm(cell_text(x)) != norm(cell_text(y))]
+
+
+def sk_only_rows(table, role, rows_now, L):
+    """Filas de la tabla de SK sin fila equivalente en la planilla (contenido anterior al sistema, o filas ya quitadas)."""
+    out = []
+    for ri in scan(table)["rows"]:
+        if not ri or ri["placeholder"] or not ri["ids"]:
+            continue
+        if not any(study_id(r) in ri["ids"] and label_match(role, ri, r, L) for r in rows_now):
+            out.append(ri)
+    return out
 
 
 def render_groups(role, rows, L, refs):
@@ -283,28 +322,49 @@ def insert_groups(table, role, groups):
             rows[at:at] = new
 
 
-def merge_role(table, role, rows_new, L, include_flagged, refs, log, label):
+def merge_role(table, role, rows_new, L, include_flagged, refs, log, label, update_changed=False, stats=None):
+    stats = stats if stats is not None else collections.Counter()
     info = scan(table)
-    new, dup, flag = [], [], []
+    new, dup, flag, changed = [], [], [], []
     for r in rows_new:
-        st = row_status(info, role, r, L)
-        (new if st == "new" else dup if st == "dup" else flag).append(r)
+        st, ri = match_row(info, role, r, L)
+        if st == "dup":
+            cells = study_cells_for(role, r, L)
+            parts = changed_parts(table["content"][ri["i"]], cells)
+            if parts:
+                changed.append((r, ri, cells, parts))
+            else:
+                dup.append(r)
+        else:
+            (new if st == "new" else flag).append(r)
+    if update_changed:                       # actualizar antes de insertar: no cambia el número de filas
+        for r, ri, cells, parts in changed:
+            tr = table["content"][ri["i"]]
+            tr["content"][-len(cells):] = cells
     add = new + (flag if include_flagged else [])
     if add:
         insert_groups(table, role, render_groups(role, add, L, refs))
-    parts = [f"+{len(add)}" if add else "sin cambios"]
+    stats.update(nuevas=len(add), iguales=len(dup), cambiadas=len(changed),
+                 para_revisar=0 if include_flagged else len(flag))
+    parts_log = [f"+{len(add)}" if add else "sin cambios"]
     if dup:
-        parts.append(f"{len(dup)} ya estaban")
-    log.append(f"  {label}: " + ", ".join(parts))
+        parts_log.append(f"{len(dup)} ya estaban")
+    if changed:
+        parts_log.append(f"{len(changed)} cambiadas en la planilla" + (" (actualizadas)" if update_changed else ""))
+    log.append(f"  {label}: " + ", ".join(parts_log))
+    oc = lambda r: r[2] if role != "comp" else r[3]
     for r in add:
-        log.append(f"      + {r[2] if role != 'comp' else r[3]} · {who(r)}")
+        log.append(f"      + {oc(r)} · {who(r)}")
     for r in dup:
-        log.append(f"      = ya estaba: {r[2] if role != 'comp' else r[3]} · {who(r)}")
+        log.append(f"      = ya estaba: {oc(r)} · {who(r)}")
+    for r, ri, cells, parts in changed:
+        log.append(f"      ~ CAMBIADA en la planilla ({', '.join(parts)}): {oc(r)} · {who(r)}"
+                   + ("" if update_changed else " — no se actualiza (usa --update-changed)"))
     for r in flag:
         log.append(f"      ? PARA REVISAR ({'se agrega' if include_flagged else 'no se agrega'}): "
-                   f"{r[2] if role != 'comp' else r[3]} · {who(r)} — el estudio ya está en la tabla con otro "
+                   f"{oc(r)} · {who(r)} — el estudio ya está en la tabla con otro "
                    "desenlace o grupo; revisa a mano")
-    return bool(add)
+    return bool(add) or (update_changed and bool(changed))
 
 
 # ---------------------------------------------------------------- ensayos
@@ -373,7 +433,7 @@ def find_duplicates(doc):
 
 
 def sync_plan(rows, vaccine, lang, name, trials, existing, include_flagged=False, add_missing=False,
-              allow_empty=False):
+              allow_empty=False, update_changed=False):
     """existing: {clave_sección: doc existente o None}. Devuelve (docs a escribir, informe, refs nuevas, avisos)."""
     full, _, warn = S.build(rows, vaccine, lang, name, trials, allow_empty)
     L = S.LANG[lang]
@@ -383,6 +443,7 @@ def sync_plan(rows, vaccine, lang, name, trials, existing, include_flagged=False
     if trials is None:
         trials = S.derive_trials(mine, L)
     out, refs = {}, []
+    stats = collections.Counter()
     for key in S.SECTION_ORDER:
         label = S.SECTIONS[key][lang]
         ex = existing.get(key)
@@ -405,6 +466,11 @@ def sync_plan(rows, vaccine, lang, name, trials, existing, include_flagged=False
             for role in SECTION_ROLES[key]:
                 new_rows = role_rows(mine, role)
                 if not new_rows:
+                    if mine and tables.get(role):
+                        orphans = sk_only_rows(tables[role][0], role, [], L)
+                        if orphans:
+                            stats.update(solo_sk=len(orphans))
+                            log.append(f"  {role}: {len(orphans)} fila(s) solo en SK (la planilla no tiene filas de este tipo)")
                     continue
                 nodes = tables.get(role)
                 if not nodes:
@@ -421,7 +487,16 @@ def sync_plan(rows, vaccine, lang, name, trials, existing, include_flagged=False
                 if len(nodes) > 1:
                     log.append(f"  {role}: hay {len(nodes)} tablas del mismo tipo; se usa la primera")
                 changed |= merge_role(nodes[0], role, new_rows, L, include_flagged, refs, log,
-                                      S.txt(nodes[0]["content"][0]["content"][0])[:70])
+                                      S.txt(nodes[0]["content"][0]["content"][0])[:70], update_changed, stats)
+                orphans = sk_only_rows(nodes[0], role, new_rows, L)
+                if orphans:
+                    stats.update(solo_sk=len(orphans))
+                    log.append(f"  {role}: {len(orphans)} fila(s) SOLO EN SK, sin fila equivalente en Tablas_capa_1 "
+                               "(contenido anterior al sistema o fila ya quitada de la planilla; no se toca):")
+                    for ri in orphans[:12]:
+                        log.append(f"      - {ri['lead_first'][:50] or '(sin desenlace)'} · {ri['ids'][0][:8]}")
+                    if len(orphans) > 12:
+                        log.append(f"      … y {len(orphans) - 12} más")
         if changed:
             bad = [i for i, (a, b) in enumerate(zip([n for n in ex["content"] if n.get("type") == "table"],
                                                     [n for n in doc["content"] if n.get("type") == "table"]))
@@ -432,4 +507,8 @@ def sync_plan(rows, vaccine, lang, name, trials, existing, include_flagged=False
                 continue
             out[key] = doc
             refs += [i for i in collect_refs(doc) if i not in before]
+    if mine:
+        log.append("RESUMEN DE CONSISTENCIA ({}): {} nuevas, {} iguales, {} cambiadas en la planilla{}, {} solo en SK, {} para revisar".format(
+            vaccine, stats["nuevas"], stats["iguales"], stats["cambiadas"],
+            " (actualizadas)" if update_changed else " (sin actualizar)", stats["solo_sk"], stats["para_revisar"]))
     return out, log, list(dict.fromkeys(refs)), warn

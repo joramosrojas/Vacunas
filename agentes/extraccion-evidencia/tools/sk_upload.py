@@ -629,7 +629,7 @@ def cmd_sync(a):
     d, by, existing = read_state(sid, secs)
     try:
         out, log, refs, warn = M.sync_plan(rows, a.vaccine, a.lang, a.name, trials, existing,
-                                           a.include_flagged, a.add_missing_tables, a.allow_empty)
+                                           a.include_flagged, a.add_missing_tables, a.allow_empty, a.update_changed)
     except ValueError as e:
         sys.exit(str(e))
     print("Síntesis:", d["sk_syntheses_by_pk"]["name"])
@@ -640,7 +640,9 @@ def cmd_sync(a):
     new_refs = [r for r in refs if r not in have]
     print(f"\nSecciones a escribir: {len(out)}; referencias nuevas: {len(new_refs)}")
     if not out:
-        print("Nada nuevo: la síntesis ya tiene todo lo que hay en las filas.")
+        stale = sum("CAMBIADA" in l for l in log)
+        print("Nada nuevo: la síntesis ya tiene todo lo que hay en las filas." if not stale else
+              f"Nada nuevo, pero {stale} fila(s) publicadas difieren de la planilla: vuelve a correr con --update-changed.")
         return
     if a.dry_run:
         print("(dry-run: no se escribió nada)")
@@ -748,6 +750,8 @@ def main(argv=None):
     sy.add_argument("--synthesis", required=True)
     sy.add_argument("--allow-empty", action="store_true")
     sy.add_argument("--include-flagged", action="store_true", help="Agrega también las filas «para revisar»")
+    sy.add_argument("--update-changed", action="store_true",
+                    help="Reemplaza el texto de las filas publicadas que cambiaron en la planilla (por defecto solo las informa)")
     sy.add_argument("--add-missing-tables", action="store_true",
                     help="Si la sección no tiene una tabla del tipo, agrega la tabla estándar")
     sy.add_argument("--backup-dir", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "work", "backups"))

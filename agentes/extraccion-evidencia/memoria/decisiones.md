@@ -45,3 +45,6 @@ Pedido del usuario: las síntesis se actualizan cada cierto tiempo agregando los
 
 ## 2026-11-04 | Marcar Published lo subido a SK
 A pedido del usuario se marcó `Published` en la planilla de extracción lo ya subido a SK (Varivax, Vimkunya, Gardasil 4 y 9): 50 filas, solo las que estaban en `Ok`. La pestaña `Efficacy` usa `Publicado` en su lista (estricta). No se tocaron 28 estudios de Gardasil 4 (Effectiveness) que están en SK con estado `Revisado` (18) o `Waiting` (10): pendiente de decisión del usuario. `Revisado` existe en las listas de Effectiveness y Post_authorization_safety pero no estaba documentado en `schemas/lists.json`. SKYVaricella tiene 7 filas en `Efficacy`, todas `Excluded`.
+
+## 2026-11-04 | SK: cada subida revisa la consistencia con Tablas_capa_1
+Pedido del usuario: al subir, ir revisando que Tablas_capa_1 sea consistente con lo ya publicado de esa vacuna. `sync` ahora informa filas nuevas / iguales / cambiadas en la planilla / solo en SK, y `--update-changed` reemplaza el texto de las cambiadas (nunca borra: lo que está solo en SK solo se lista). Primera aplicación: Gardasil 4 (14 filas en inglés, 52 en español) y Gardasil 9 español (1); Varivax y Vimkunya ya coincidían.
