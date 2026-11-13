@@ -21,7 +21,7 @@
     "Gardasil 4": "Gardasil 4 HPV vaccine",
     "Gardasil 9": "Gardasil 9 HPV vaccine",
     "Vimkunya (CHK VLP)": "Vimkunya chikungunya vaccine",
-    "VIMKUNYA (CHIKV VLP)": "Vimkunya chikungunya vaccine"
+    "VIMKUNYA (CHIKV VLP)": "Vimkunya chikungunya vaccine", "LC16m8": "LC16m8 mpox vaccine"
   },
   "comparison": {
     "effectiveness": ["Vaccinated versus unvaccinated", "Pre-vaccination period versus post-vaccination period"],

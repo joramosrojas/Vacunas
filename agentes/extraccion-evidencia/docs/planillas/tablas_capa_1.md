@@ -29,7 +29,7 @@ Una fila por **desenlace** y por **grupo**: un artículo con enfermedad y enferm
 
 ## Nombres de vacuna (columna A)
 
-Patrón: `<Marca> <enfermedad> vaccine`. Existentes: `Abrysvo RSV vaccine`, `Dengvaxia`, `Qdenga`, `STAMARIL`, `Ixchiq chikungunya vaccine`, `Imvanex - Jynneos mpox vaccine`, `Measles, mumps and rubella vaccine`, `Comirnaty/Pfizer-BNT162b2 COVID-19 vaccine`, `Spikevax/Moderna COVID-19 vaccine`, `CoronaVac/Sinovac COVID-19 vaccine`, `Convidecia/CanSino COVID-19 vaccine`, `Nuvaxovid - Novavax/Serum Institute of India COVID-19 vaccine`, `Corbevax COVID-19 vaccine`. Varicela: `Varivax varicella vaccine`. La tabla de equivalencias planilla -> visualización está en `schemas/lists.json` (`vaccine_display`).
+Patrón: `<Marca> <enfermedad> vaccine`. Existentes: `Abrysvo RSV vaccine`, `Dengvaxia`, `Qdenga`, `STAMARIL`, `Ixchiq chikungunya vaccine`, `Imvanex - Jynneos mpox vaccine`, `Measles, mumps and rubella vaccine`, `Comirnaty/Pfizer-BNT162b2 COVID-19 vaccine`, `Spikevax/Moderna COVID-19 vaccine`, `CoronaVac/Sinovac COVID-19 vaccine`, `Convidecia/CanSino COVID-19 vaccine`, `Nuvaxovid - Novavax/Serum Institute of India COVID-19 vaccine`, `Corbevax COVID-19 vaccine`. Varicela: `Varivax varicella vaccine`. Mpox LC16m8: `LC16m8 mpox vaccine` (usuario, 13 nov 2026). La tabla de equivalencias planilla -> visualización está en `schemas/lists.json` (`vaccine_display`).
 
 ## Formato de las celdas en inglés (effectiveness)
 
