@@ -48,3 +48,6 @@ A pedido del usuario se marcó `Published` en la planilla de extracción lo ya s
 
 ## 2026-11-04 | SK: cada subida revisa la consistencia con Tablas_capa_1
 Pedido del usuario: al subir, ir revisando que Tablas_capa_1 sea consistente con lo ya publicado de esa vacuna. `sync` ahora informa filas nuevas / iguales / cambiadas en la planilla / solo en SK, y `--update-changed` reemplaza el texto de las cambiadas (nunca borra: lo que está solo en SK solo se lista). Primera aplicación: Gardasil 4 (14 filas en inglés, 52 en español) y Gardasil 9 español (1); Varivax y Vimkunya ya coincidían.
+
+## 2026-11-13 | Nuevos desenlaces de seguridad post-autorización
+A pedido del usuario se suben a Tablas_capa_1 también los desenlaces que no estaban en `safety_outcomes`. Se agregaron a `schemas/lists.json`: `Hypertensive disorders of pregnancy`, `Premature rupture of membranes`, `Immune thrombocytopenia`, `Postpartum hemorrhage`, `Gestational diabetes` (Michnick 2026, Sun JW 2026, Gwak 2026, Lipkind 2017).
