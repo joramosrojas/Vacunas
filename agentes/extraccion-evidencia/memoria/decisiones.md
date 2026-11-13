@@ -51,3 +51,6 @@ Pedido del usuario: al subir, ir revisando que Tablas_capa_1 sea consistente con
 
 ## 2026-11-13 | Nuevos desenlaces de seguridad post-autorización
 A pedido del usuario se suben a Tablas_capa_1 también los desenlaces que no estaban en `safety_outcomes`. Se agregaron a `schemas/lists.json`: `Hypertensive disorders of pregnancy`, `Premature rupture of membranes`, `Immune thrombocytopenia`, `Postpartum hemorrhage`, `Gestational diabetes` (Michnick 2026, Sun JW 2026, Gwak 2026, Lipkind 2017).
+
+## 2026-11-13 | Carga directa a SK sin pasar por Tablas_capa_1
+Con los conectores de Google caídos, a pedido del usuario se subieron a SK (18 síntesis, inglés y español) las 99 filas preparadas para Tablas_capa_1 desde el CSV local; Tablas_capa_1 se carga después con las mismas filas. Abrysvo: se creó la tabla general de eficacia (no existía; `--add-missing-tables`) para Simoes 2026, y en la síntesis en español se arregló la tabla de seguridad, que tenía dos filas vacías dentro de bloques combinados (MATISSE con rowspan 2), con copia en `work/backups/`.
