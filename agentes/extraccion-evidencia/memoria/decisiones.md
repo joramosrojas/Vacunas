@@ -54,3 +54,6 @@ A pedido del usuario se suben a Tablas_capa_1 también los desenlaces que no est
 
 ## 2026-11-13 | Carga directa a SK sin pasar por Tablas_capa_1
 Con los conectores de Google caídos, a pedido del usuario se subieron a SK (18 síntesis, inglés y español) las 99 filas preparadas para Tablas_capa_1 desde el CSV local; Tablas_capa_1 se carga después con las mismas filas. Abrysvo: se creó la tabla general de eficacia (no existía; `--add-missing-tables`) para Simoes 2026, y en la síntesis en español se arregló la tabla de seguridad, que tenía dos filas vacías dentro de bloques combinados (MATISSE con rowspan 2), con copia en `work/backups/`.
+
+## 2026-11-16 | Marcar publicadas las filas que están en Tablas_capa_1 y en SK
+A pedido del usuario se marcaron en la planilla de extracción las 54 filas cuya información ya está en Tablas_capa_1 (filas 2336-2435) y en SK: Effectiveness 15, Post_authorization_safety 14 (incluye Nishiyama) e Immunogenicity 11 con `Published`; Efficacy 14 con `Publicado`. Immunogenicity acepta `Published` (ya lo usaba). Quedan en `Ok` Tugwell, Gabet A, Hisamoto (Efficacy) y los estudios que no se cargaron. Comparación antes/después: solo cambió la columna D en esas filas.
