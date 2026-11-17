@@ -6,6 +6,7 @@
 edits.json: lista de ediciones
   {"synthesis": "<uuid>", "section": "<nombre de la sección en SK>", "op": "replace",
    "old": "texto exacto", "new": "texto nuevo", "count": 2}      # count = ocurrencias esperadas (por defecto, >=1)
+  Cualquier edición acepta "within": "<texto>" para actuar solo en la celda que contiene ese texto.
   {"synthesis": ..., "section": ..., "op": "drop_paragraph", "text": "texto completo del párrafo", "count": 1}
   {"synthesis": ..., "section": ..., "op": "text_to_ref", "id": "<Episte ID>", "count": 1}
       el nodo de texto «[<id>]» (cita escrita como texto) pasa a ser una cita real; registra la referencia si falta
@@ -45,8 +46,37 @@ def ptext(p):
     return "".join(n.get("text", "") for n in p.get("content", []) or [] if n.get("type") == "text")
 
 
+def full_text(node):
+    if node.get("type") == "text":
+        return node["text"]
+    return "".join(full_text(c) for c in node.get("content", []) or [])
+
+
+def cells_within(doc, needle):
+    """Celdas de tabla (o párrafos fuera de tablas) cuyo texto contiene `needle`."""
+    out = []
+
+    def walk(n, in_cell):
+        if n.get("type") in ("tableCell", "tableHeader"):
+            if needle in full_text(n):
+                out.append(n)
+            return
+        if n.get("type") in ("paragraph", "heading") and not in_cell:
+            if needle in full_text(n):
+                out.append(n)
+            return
+        for c in n.get("content", []) or []:
+            walk(c, in_cell)
+    walk(doc, False)
+    return out
+
+
 def apply(doc, e):
-    """Aplica una edición a doc (in situ). Devuelve el número de ocurrencias tratadas."""
+    """Aplica una edición a doc (in situ). Devuelve el número de ocurrencias tratadas.
+    Con "within": "<texto>", solo dentro de las celdas (o párrafos sueltos) que contienen ese texto."""
+    if e.get("within"):
+        sub = {k: v for k, v in e.items() if k != "within"}
+        return sum(apply(c, sub) for c in cells_within(doc, e["within"]))
     op = e.get("op", "replace")
     n = 0
     if op == "replace":
