@@ -70,3 +70,7 @@ La síntesis se va completando a medida que salen estudios; **solo se agrega**. 
 - El token es la sesión del usuario: no guardarlo en archivos ni commits; se pasa por `SK_TOKEN` en cada sesión y expira.
 - Otras personas editan la síntesis en paralelo: la herramienta no sobrescribe reportes existentes sin `--replace`, y `--only` limita el reemplazo a una sección.
 - Un reporte sobrescrito no se recupera desde aquí (SK guarda historial de versiones: *Version history* en la pantalla).
+
+## Portugués (copia traducida desde la síntesis en inglés)
+
+Las síntesis en portugués no se arman desde `Tablas_capa_1` (no hay columnas en portugués): se copian las secciones `efficacy`, `safety` y `post` completas (tablas y texto) de la síntesis en inglés y se traducen con `tools/sk_translate.py` (`export` → traducir `units.json` → `apply` → `upload`). Secciones en SK: `Eficácia e efetividade da vacina`, `Segurança da vacina`, `Segurança pós-autorização`. Terminología: `docs/planillas/glosario_pt.md`. Números en formato brasileño (`3.890`, `98,8%`), convertidos por código en `apply`; los textos que ya vengan en formato español en la síntesis en inglés hay que revisarlos a mano. `upload` solo crea secciones que no existen; `--replace-if-unchanged <pt anterior>` rehace las que siguen idénticas a la subida anterior. La sección de ensayos no se copia. Primera carga: 19 vacunas el 2026-11-17 (HEXASIIL no tenía secciones de efectos en inglés).
