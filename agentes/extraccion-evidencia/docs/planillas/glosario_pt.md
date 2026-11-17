@@ -4,7 +4,7 @@ Para traducir las secciones de efectos de una síntesis en inglés a la síntesi
 
 ## Reglas
 
-- **Números, IC y fechas numéricas: exactamente como en inglés** (no cambiar punto decimal ni separador de miles: `3,890`, `1.27`, `95.8 - 99.5`). Solo se traduce la palabra de alrededor.
+- **Números: al traducir, dejarlos exactamente como en inglés** (`3,890`, `1.27`, `95.8 - 99.5`). `sk_translate.py apply` los pasa después, por código, al formato brasileño (`3.890`, `1,27`, `95,8 - 99,5`), que es el que se publica (decisión del usuario, 2026-11-17). Códigos como `B.1.1.7`, DOI o versiones no se tocan.
 - `95% CI` → `IC 95%` (y `95% CI: 95% confidence interval` → `IC 95%: intervalo de confiança de 95%`).
 - Abreviaturas de medidas se mantienen: RR, OR, HR, IRR, VE, GMT, GMC, SAE, AE, AESI, PCR, CHIKV, DENV, RSV/VRS (ver abajo). Su definición sí se traduce (`RR: relative risk` → `RR: risco relativo`).
 - Nombres de ensayos, códigos (VLA1553-321, NCT…), marcas, cepas y sistemas (VAERS, EudraVigilance, MHRA) sin traducir.

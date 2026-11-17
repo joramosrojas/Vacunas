@@ -31,6 +31,14 @@ SECS = {  # clave -> (nombre en inglés, nombre en portugués)
 INLINE_PARENTS = {"paragraph", "heading"}
 LETTER = re.compile(r"[A-Za-z]")
 NUM = re.compile(r"\d+(?:[.,]\d+)*")
+# número en formato inglés (1,234.5 / 0.25) que no es parte de un código (B.1.1.7, 10.1056/..., v1.0)
+EN_NUM = re.compile(r"(?<![A-Za-z0-9_.,/])(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+\.\d+)(?![0-9]|[.,]\d|/)")
+SWAP = str.maketrans({",": ".", ".": ","})
+
+
+def br_numbers(s):
+    """1,234.5 -> 1.234,5 (formato brasileño)."""
+    return EN_NUM.sub(lambda m: m.group(1).translate(SWAP), s)
 
 
 def section_ids():
@@ -151,7 +159,7 @@ def cmd_apply(a):
             if dst is None:
                 continue
             for t, s in zip(tn, dst):
-                t["text"] = s
+                t["text"] = br_numbers(s) if a.numbers == "br" else s
         for b in blocks(doc2):  # el editor no acepta nodos de texto vacíos
             if "content" in b:
                 b["content"] = [n for n in b["content"] if not (n.get("type") == "text" and n["text"] == "")]
@@ -178,10 +186,25 @@ def cmd_upload(a):
     d = fetch(sid)
     print("Síntesis:", d["sk_syntheses_by_pk"]["name"])
     have_secs = {r["section_id"] for r in d["reports_synthesis_reports"]}
+    cur = {r["section_id"]: r for r in d["reports_synthesis_reports"]}
     todo = [k for k in pt["docs"] if ids[(k, "pt")] not in have_secs]
-    skip = [k for k in pt["docs"] if k not in todo]
+    replace = {}
+    if a.replace_if_unchanged:  # solo secciones que siguen idénticas a lo que subió esta herramienta
+        prev = json.load(open(a.replace_if_unchanged, encoding="utf-8"))["docs"]
+        for k in pt["docs"]:
+            r = cur.get(ids[(k, "pt")])
+            if r is None or k not in prev:
+                continue
+            c = r["content"] if isinstance(r["content"], dict) else json.loads(r["content"])
+            if c == prev[k]:
+                replace[k] = r["id"]
+            else:
+                print(f"AVISO {SECS[k][1]}: cambió desde la subida anterior (alguien la editó); no se reemplaza")
+    skip = [k for k in pt["docs"] if k not in todo and k not in replace]
     have = {r["reference_id"] for r in d["sk_synthesis_references"]}
     new_refs = [r for r in pt["refs"] if r not in have]
+    if replace:
+        print(f"secciones a reemplazar (sin ediciones desde la subida anterior): {[SECS[k][1] for k in replace]}")
     print(f"secciones a crear: {[SECS[k][1] for k in todo]}; ya existen (no se tocan): {[SECS[k][1] for k in skip]}")
     print(f"referencias nuevas: {len(new_refs)} de {len(pt['refs'])}")
     if a.dry_run:
@@ -196,11 +219,14 @@ def cmd_upload(a):
         S.gql("mutation($o:[reports_synthesis_reports_insert_input!]!){insert_reports_synthesis_reports(objects:$o)"
               "{affected_rows}}",
               {"o": [{"synthesis_id": sid, "section_id": ids[(k, "pt")], "content": pt["docs"][k]} for k in todo]})
+    for k, rid in replace.items():
+        S.gql("mutation($id:uuid!,$c:json!){update_reports_synthesis_reports_by_pk(pk_columns:{id:$id},"
+              "_set:{content:$c}){id}}", {"id": rid, "c": pt["docs"][k]})
     d2 = fetch(sid)
     got = {r["section_id"]: r["content"] for r in d2["reports_synthesis_reports"]}
     refs2 = {r["reference_id"] for r in d2["sk_synthesis_references"]}
     ok = True
-    for k in todo:
+    for k in todo + list(replace):
         c = got.get(ids[(k, "pt")])
         c = json.loads(c) if isinstance(c, str) else c
         good = c is not None and shape(c) == shape(pt["docs"][k])
@@ -227,11 +253,15 @@ def main():
     e.set_defaults(fn=cmd_export)
     ap = sub.add_parser("apply")
     ap.add_argument("dir")
+    ap.add_argument("--numbers", choices=["br", "en"], default="br",
+                    help="br: 1.234,5 (por defecto); en: deja los números como en inglés")
     ap.set_defaults(fn=cmd_apply)
     u = sub.add_parser("upload")
     u.add_argument("synthesis")
     u.add_argument("dir")
     u.add_argument("--dry-run", action="store_true")
+    u.add_argument("--replace-if-unchanged", metavar="PT_ANTERIOR.json",
+                   help="Reemplaza las secciones que siguen idénticas a ese pt.json (subida anterior de esta herramienta)")
     u.set_defaults(fn=cmd_upload)
     a = p.parse_args()
     a.fn(a)
