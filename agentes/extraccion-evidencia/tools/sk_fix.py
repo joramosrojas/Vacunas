@@ -8,6 +8,9 @@ edits.json: lista de ediciones
    "old": "texto exacto", "new": "texto nuevo", "count": 2}      # count = ocurrencias esperadas (por defecto, >=1)
   Cualquier edición acepta "within": "<texto>" para actuar solo en la celda que contiene ese texto.
   {"synthesis": ..., "section": ..., "op": "drop_paragraph", "text": "texto completo del párrafo", "count": 1}
+  {"synthesis": ..., "section": ..., "op": "drop_text", "text": "[Autor, 2024]"}   # quita ese nodo de texto y su salto
+  {"synthesis": ..., "section": ..., "op": "drop_table_rows", "table": "<texto del título>", "start": 1, "end": 9,
+   "first_starts": "<inicio del texto de la primera fila a quitar>", "last_starts": "<inicio de la última>"}
   {"synthesis": ..., "section": ..., "op": "text_to_ref", "id": "<Episte ID>", "count": 1}
       el nodo de texto «[<id>]» (cita escrita como texto) pasa a ser una cita real; registra la referencia si falta
 
@@ -108,7 +111,52 @@ def apply(doc, e):
                     walk(ch)
         walk(doc)
         return n
+    if op == "drop_text":
+        # quita el nodo de texto exactamente igual a e["text"] y el salto de línea que lo sigue (o precede)
+        def walk(node):
+            nonlocal n
+            c = node.get("content")
+            if not c:
+                return
+            i = 0
+            while i < len(c):
+                ch = c[i]
+                if ch.get("type") == "text" and ch["text"].strip() == e["text"].strip():
+                    del c[i]
+                    if i < len(c) and c[i].get("type") == "hardBreak":
+                        del c[i]
+                    elif i > 0 and c[i - 1].get("type") == "hardBreak":
+                        del c[i - 1]
+                    n += 1
+                    if not c:
+                        node.pop("content", None)
+                        return
+                    continue
+                walk(ch)
+                i += 1
+        walk(doc)
+        return n
+    if op == "drop_table_rows":
+        # en la tabla cuyo primer renglón contiene e["table"], quita las filas [start, end) si sus textos coinciden
+        for t in tables(doc):
+            rows = t["content"]
+            if e["table"] not in full_text(rows[0]):
+                continue
+            seg = rows[e["start"]:e["end"]]
+            if (seg and full_text(seg[0]).startswith(e["first_starts"])
+                    and full_text(seg[-1]).startswith(e["last_starts"])):
+                del rows[e["start"]:e["end"]]
+                n += 1
+        return n
     raise ValueError("op desconocida: " + op)
+
+
+def tables(node):
+    if node.get("type") == "table":
+        yield node
+        return
+    for c in node.get("content", []) or []:
+        yield from tables(c)
 
 
 def cited(doc):
@@ -158,7 +206,8 @@ def main():
             ok_all = False
             continue
         n_text_to_ref = sum(apply(copy.deepcopy(before), e) for _, e in es if e.get("op") == "text_to_ref")
-        if cited(doc) != cited(before) + n_text_to_ref:
+        expect = cited(before) + n_text_to_ref - sum(e.get("drops_citations", 0) for _, e in es)
+        if cited(doc) != expect:
             print("  ERROR: cambió el número de citas; no se escribe")
             ok_all = False
             continue

@@ -185,3 +185,38 @@ https://www.skplatform.org/app/syntheses/072b63c3-1c57-4e5c-9525-e7b6ff32d011/wo
    - Sección: Vaccine efficacy and effectiveness → tabla «Effectiveness of the Gardasil 4 HPV vaccine (comparative studies)» → fila «Contracting disease» → columna «Main results»
    - Episte ID: `d4c9d26a7ed3842bd5825cbbf7d0402f4e541fb0`
    - Texto de la celda: «Women, Norway: / IRR: 4.8% (95% CI: 4.3 - 5.3) /  / Women, Denmark: / IRR: 18.0% (95% CI: 17.5 - 18.6) /  / Men, Norway: / IRR: 1.9% (95% CI: 1.4 - 2.4) /  / Men, Denmark: / IRR: 10.7% (95% CI: 10.3 - 11.2)»
+
+---
+
+## Estado al 2026-11-17 (corregido en inglés, portugués y español con `tools/sk_fix.py`)
+
+Valores confirmados contra el artículo (abstract o texto completo) antes de cambiarlos. Copias previas en `work/backups/fix_*`.
+
+| Vacuna | Error | Corrección | Fuente |
+|---|---|---|---|
+| Dengvaxia | «February 15 to 2018» | February 15, 2018 | Abstract, PMID 40279922 |
+| Pfizer | «. were measured.» sobrante (3 en inmunogenicidad + 5 en seguridad) | eliminado | — |
+| Pfizer | «July 15, 2021 to November 31, 2021» (2 filas) | January 1, 2021 to September 27, 2021 (también estaba mal el inicio) | medRxiv 2021.11.12.21266222, Methods |
+| Pfizer | «May 1, 2021 to March 2, 2021» | vaccination status through May 31, 2021 (follow-up 14-151 days after dose 2): eran fechas de corte de cohortes | PMC9061778 |
+| Pfizer | Fila en español (Castro 2025) con cita como texto | traducida, cita real; resultado corregido: el 0,66 (0,58-0,74) era la densidad de incidencia de Covishield. Ahora RR bruto en vacunación completa con Comirnaty 3.30 (1.48-7.33) | PMC13035244, Tabla 1 |
+| Pfizer | Cita como texto (Altarawneh 2023) | cita real | — |
+| Pfizer | «15,09 controls» | 1,509 controls | MMWR mm7038e1, Tabla 2 |
+| Pfizer | aOR 0.13 (0.07 - 0.03) | 0.13 (0.07 - 0.30) (desenlace UCI, modelo 4) | Eur Res J 2025, Tabla 3 |
+| Pfizer y Moderna | «January 7, 2022 to December 31, 2021» (8 filas) | December 11, 2020 to January 22, 2022 (Optum), January 7, 2022 (HealthCore) and December 31, 2021 (CVS Health) | PMC9513329 |
+| Pfizer | «>23.300», «12 February 12», «Euravigilance», palabras duplicadas | >23,300; February 12; EudraVigilance | — |
+| Moderna | «17,32,112» | 1,732,112 | medRxiv 2021.12.23.21267853 |
+| Moderna | «64,5109» | 645,109 (ojo: es el total con ≥1 PCR, antes del criterio de edad) | medRxiv 2021.08.06.21261707 |
+| Moderna | «542,352 million doses participants» (fila de Spikevax) | 108.165 million doses (542.352 es Comirnaty); 108.65 → 108.165 en la fila BRAVE; fechas «13 Dec 2020 – 31 Dec 2021» | PMC12529280 |
+| Moderna | «mRNA-1723», «1 May 1», «30 September 30», «study study» | mRNA-1273, etc. | — |
+| Sinovac | Bloque de borrador con «[si hay más de un ensayo]» y «[x]» en la tabla de seguridad por subgrupo | eliminado (la versión completa de la tabla ya estaba debajo) | — |
+| Novavax | «up to 386 after» | up to 386 days after (registro NCT04533399; el artículo no lo menciona) | ClinicalTrials.gov |
+| CanSino | «59 no allergic reactions» | 59 doses without allergic reactions and 5 doses with | PMC9781330, Tabla 2 |
+| Gardasil 4 | «IRR: 4.8%…» (4 valores) | Annual decrease in incidence rate: … (no son IRR) | PMID 31917039 |
+
+Solo en español: «de la vacuna de la vacuna Comirnaty» (títulos), «vacuna vacuna MMR», Sinovac seguridad por subgrupo decía «evaluar la eficacia», citas escritas como ID de texto (Imvanex, Ixchiq ×2, Moderna) convertidas en citas reales.
+
+**Pendientes (no se cambiaron; requieren el texto completo):**
+- Pfizer, VE Omicron BA.2 «16 (95% CI: .-5 - 33)» (Episte ID `46113dbe160ef95a32e98e83242cfb228841a7ab`, SSRN 4011905): el español dice «0,5-33». No se pudo leer el preprint.
+- Pfizer, CANVAS «January 202?» (Episte ID `a07b77e652460db287d0d576b83367c5bc832943`, Vaccine 2026;128630): el artículo no es de acceso abierto. Otra fila del mismo estudio en la síntesis en español dice «enero de 2022».
+
+**Para revisar (señalado al verificar, no se cambió):** Moderna `89175929d04eb6213c11f6530819fe15bda6a982` figura como «Test-negative design study» pero el artículo es una cohorte con no vacunados como comparador; Moderna `db32c1626e6b309f6a4ad3b6c137b094331cdf55`: 43,895 es el tamaño de cada cohorte pareada, no «no vacunados». Los avisos «DUPLICADO» que da `check` en Dengvaxia, Pfizer, Moderna y Sinovac (filas repetidas y referencias registradas dos veces) ya estaban antes.
