@@ -43,3 +43,6 @@ Aprendido: en seguridad comparativa sin estimador de razón (solo tasas) la plan
 - Tindale (`26066d1a` preprint, `43438cf8` Lancet): la tabla cita la revista; el preprint queda `Preprint`.
 - Lassen 2026 (`3dd8beab`, Abrysvo, DAN-RSV): sin anticuerpos -> Immunogenicity `Excluded`; en la tabla desenlace primario `Contracting severe disease` y edades en una fila `Older adults`.
 - Simone 2025 (`3a4082d0`, Vimkunya): dosis de EE. UU. son vendidas (IQVIA), las de Alemania administradas; la frase de la planilla no coincidía con el artículo.
+
+## Castro 2025 (`7ca5360f355cc449ae5f3b4d460f95768bd9e57b`): incidencia tomada como RR
+Tabla 1 trae por grupo "Incidence density (95%CI)" y "RR (95% CI)". Se copió la densidad (0.66, 2.87) como RR. Correcto: RR crudo vs no vacunados (CoronaVac infección 1.29; grave 0.15; Comirnaty infección 3.30). Comirnaty no tiene RR de grave (0 casos).

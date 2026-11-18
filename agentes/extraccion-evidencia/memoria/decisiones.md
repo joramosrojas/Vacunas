@@ -48,3 +48,9 @@ A pedido del usuario se marcó `Published` en la planilla de extracción lo ya s
 
 ## 2026-11-04 | SK: cada subida revisa la consistencia con Tablas_capa_1
 Pedido del usuario: al subir, ir revisando que Tablas_capa_1 sea consistente con lo ya publicado de esa vacuna. `sync` ahora informa filas nuevas / iguales / cambiadas en la planilla / solo en SK, y `--update-changed` reemplaza el texto de las cambiadas (nunca borra: lo que está solo en SK solo se lista). Primera aplicación: Gardasil 4 (14 filas en inglés, 52 en español) y Gardasil 9 español (1); Varivax y Vimkunya ya coincidían.
+
+## 2026-11-17 | Síntesis en portugués y corrección de errores en las tres versiones
+Las 19 síntesis en portugués se poblaron copiando y traduciendo las secciones de efectos (eficacia/efectividad, seguridad, post-autorización) de las síntesis en inglés con `tools/sk_translate.py` (glosario en `docs/planillas/glosario_pt.md`, números en formato brasileño). HEXASIIL no tiene secciones de efectos en ningún idioma. Los errores detectados al traducir se verificaron contra los artículos y se corrigieron en inglés, portugués y español con `tools/sk_fix.py` (detalle y pendientes en `docs/revisiones/errores_sintesis_en_2026-11-17.md`). En español, los enlaces «[Autor, año]» al DOI son un estilo intencional: no se quitan.
+
+## 2026-11-18 | Castro 2025 se mantiene en Pfizer, con el valor publicado
+Castro 2025 (`7ca5360f355cc449ae5f3b4d460f95768bd9e57b`) cumple las reglas de producto (separa Comirnaty) y se mantiene en la síntesis de Pfizer aunque el dato es débil (RR crudo, 6 infecciones). Se publica el RR tal como está en la Tabla 1 (3.30, 1.48-7.33), sin nota, aunque las columnas de Comirnaty parecen invertidas. Sus filas viven en la planilla 2025 (Tablas_capa_1, 575-577), corregidas el 2026-11-18.

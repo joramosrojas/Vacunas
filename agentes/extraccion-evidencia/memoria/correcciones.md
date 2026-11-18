@@ -121,3 +121,13 @@ Estados: `activa` (se carga en cada corrida), `promovida` (ya está en `docs/reg
 - Qué hice: puse a Weibel (ECA vs placebo, niños de 1 a 14 años) en las tablas de subgrupos de la síntesis en SK, por tener grupo `Children and adolescents`.
 - Qué corresponde: un ECA que compara con placebo va siempre en las tablas generales (eficacia, seguridad, inmunogenicidad), aunque los participantes sean niños.
 - Regla: en SK, ECA vs placebo = tabla general; las tablas de subgrupos solo para análisis por subgrupo dentro de un estudio. Grupo `Overall` en Tablas_capa_1 para esos ECA.
+
+## C-025 | 2026-11-18 | estado: promovida | ámbito: effectiveness
+- Qué hice: en Castro 2025 (planilla 2025, filas 575-577) se extrajo la densidad de incidencia (por 1.000 o por 10⁶ personas-día) como si fuera el RR, con "%" y a veces con "VE:"; además, la fila de Comirnaty quedó en enfermedad grave con el resultado de infección de Covishield.
+- Qué corresponde: copiar la medida de efecto de la columna correcta (RR, VE, OR…), del producto y desenlace de la fila; si el artículo publica un valor que parece inconsistente (p. ej. columnas aparentemente invertidas), poner el valor tal como lo publica, sin nota explicativa (decisión del usuario).
+- Regla: verificar que el número sea la medida de efecto (no una tasa o incidencia), del producto y desenlace de la fila; RR crudo se rotula "crude"; ante inconsistencias del artículo, reportar lo publicado sin nota.
+
+## C-026 | 2026-11-18 | estado: promovida | ámbito: traduccion
+- Qué hice: subí la primera síntesis en portugués (Ixchiq) con los números en formato inglés (3,890; 98.8%).
+- Qué corresponde: en portugués, formato brasileño (3.890; 98,8%); lo hace `tools/sk_translate.py apply` por código.
+- Regla: al traducir, dejar los números como en inglés y dejar que `apply` los convierta; revisar a mano los textos que ya venían en formato español.
