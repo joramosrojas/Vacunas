@@ -21,7 +21,8 @@ SUBGROUP_ROLES = ("eff_sub", "saf_sub")
 SECTION_ROLES = {"efficacy": ["imm", "eff", "eff_sub", "effect"], "safety": ["saf", "saf_sub"],
                  "post": ["comp", "nc"]}
 PLACEHOLDER = re.compile(r"^(no studies|there are no|no comparative|no non-comparative|no randomized|"
-                         r"no se identific|no hay|los datos disponibles|available data)")
+                         r"no se identific|no hay|los datos disponibles|available data|"
+                         r"não foram identificad|não há|não se identific|os dados disponíveis)")
 
 
 # ---------------------------------------------------------------- lectura de tablas existentes
@@ -52,22 +53,23 @@ def classify(table):
     if not rows or not rows[0].get("content"):
         return None
     t = norm(cell_text(rows[0]["content"][0]))
-    if "booster" in t or "refuerzo" in t:
+    if "booster" in t or "refuerzo" in t or "reforço" in t:
         return None
     head = norm(cell_text(rows[1]["content"][0])) if len(rows) > 1 and rows[1].get("content") else ""
     sub = ("by subgroup" in t or "por subgrupo" in t
-           or head in ("subgroup", "subgrupo", "outcome by subgroup", "outcomes by subgroup", "desenlace por subgrupo"))
-    if "post-authorization" in t or "post-autoriz" in t:
-        if "non-comparative" in t or "no comparativ" in t:
+           or head in ("subgroup", "subgrupo", "outcome by subgroup", "outcomes by subgroup", "desenlace por subgrupo",
+                       "desfecho por subgrupo"))
+    if "post-authorization" in t or "post-autoriz" in t or "pós-autoriz" in t:
+        if "non-comparative" in t or "no comparativ" in t or "não comparativ" in t:
             return "nc"
         return "comp" if "comparative" in t or "comparativ" in t else None
-    if t.startswith(("immunogenicity", "inmunogenicidad")):
+    if t.startswith(("immunogenicity", "inmunogenicidad", "imunogenicidade")):
         return "imm"
-    if t.startswith(("effectiveness", "efectividad")):
+    if t.startswith(("effectiveness", "efectividad", "efetividade")):
         return "effect"
-    if t.startswith(("efficacy", "eficacia")):
+    if t.startswith(("efficacy", "eficacia", "eficácia")):
         return "eff_sub" if sub else "eff"
-    if t.startswith(("safety", "seguridad")):
+    if t.startswith(("safety", "seguridad", "segurança")):
         return "saf_sub" if sub else "saf"
     return None
 
@@ -177,7 +179,7 @@ def dedupe_incoming(mine, log):
     return out
 
 
-STANDARD = {norm(v) for k in ("en", "es") for v in list(S.LANG[k]["outcome"].values())} | {
+STANDARD = {norm(v) for k in ("en", "es", "pt") for v in list(S.LANG[k]["outcome"].values())} | {
     "antibody response", "cellular response", "contracting disease", "contracting severe disease",
     "any adverse event", "serious adverse events"}
 
@@ -438,7 +440,7 @@ def sync_plan(rows, vaccine, lang, name, trials, existing, include_flagged=False
     full, _, warn = S.build(rows, vaccine, lang, name, trials, allow_empty)
     L = S.LANG[lang]
     log = []
-    mine = [list(r) + [""] * (11 - len(r)) for r in rows if r and r[0] == vaccine]
+    mine = [list(r) + [""] * (14 - len(r)) for r in rows if r and r[0] == vaccine]
     mine = dedupe_incoming(mine, log)
     if trials is None:
         trials = S.derive_trials(mine, L)

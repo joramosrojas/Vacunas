@@ -45,6 +45,10 @@ Títulos: `<Tipo> of the <Vacuna>`; en español `<Tipo> de la vacuna <Marca> con
 - Sin filas en una sección: **tabla estándar de "no hay estudios"** (mensajes en `tools/sk_upload.py`, `LANG`). Con la vacuna sin ninguna fila (p. ej. SKYVaricella) se usa `--allow-empty`.
 - **Cada síntesis es de un producto.** `Gardasil 4 HPV vaccine` va a la síntesis cuadrivalente; `Gardasil 9 HPV vaccine`, a la suya. No mezclar.
 
+## Portugués
+
+`--lang pt` (y `--name`, como en español) lee las columnas L:N de `Tablas_capa_1`. Secciones: «Eficácia e efetividade da vacina», «Segurança da vacina», «Segurança pós-autorização», «Características gerais dos ensaios clínicos». Títulos y mensajes tomados de la síntesis portuguesa de Gardasil 4 (`7950b3de…`). Esa síntesis no tiene la sección de ensayos: para corregir una fila sin crearla, usar `sync --only safety` (u otra lista de secciones). Una fila sin texto en L:N se rechaza (no hay Episte ID en la celda de diseño).
+
 ## Español
 
 Misma estructura con las columnas H:J. Títulos y mensajes tomados de las síntesis de referencia en español (Ixchiq, MMR L-Zagreb, LC16m8): `Desenlace`, `Principales resultados`, `Eficacia*`, `Estudios comparativos`, `No se identificaron estudios que reporten la eficacia de la vacuna.`, `Contraer la enfermedad` / `Contraer la enfermedad severa`, `Niños y adolescentes`. El nombre en los títulos lo da `--name`. El **evento** de seguridad comparativa (columna D, siempre en inglés) se muestra traducido en la primera columna: se toma de la frase «<evento> se midió como…» de la columna I; si la planilla no lo tradujo (p. ej. «Appendicitis», porque el evento no estaba en la lista), queda en inglés. Al comparar con lo ya publicado se aceptan las dos formas.

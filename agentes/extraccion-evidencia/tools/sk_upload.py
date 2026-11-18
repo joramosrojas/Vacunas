@@ -25,11 +25,14 @@ ID40 = re.compile(r"\[([0-9a-f]{40})\]")
 REGISTRY = re.compile(r"\[((?:NCT|CTRI|jRCT|ISRCTN|ChiCTR|EudraCT|ACTRN)[^\]]*)\]")
 
 SECTIONS = {  # clave -> nombre de la sección de SK en cada idioma
-    "efficacy": {"en": "Vaccine efficacy and effectiveness", "es": "Eficacia y efectividad de la vacuna"},
-    "safety": {"en": "Vaccine safety", "es": "Seguridad de la vacuna"},
-    "post": {"en": "Post-authorization safety", "es": "Seguridad post-autorización"},
+    "efficacy": {"en": "Vaccine efficacy and effectiveness", "es": "Eficacia y efectividad de la vacuna",
+                 "pt": "Eficácia e efetividade da vacina"},
+    "safety": {"en": "Vaccine safety", "es": "Seguridad de la vacuna", "pt": "Segurança da vacina"},
+    "post": {"en": "Post-authorization safety", "es": "Seguridad post-autorización",
+             "pt": "Segurança pós-autorização"},
     "trials": {"en": "General characteristics of clinical trials",
-               "es": "Características generales de los ensayos clínicos"},
+               "es": "Características generales de los ensayos clínicos",
+               "pt": "Características gerais dos ensaios clínicos"},
 }
 SECTION_ORDER = ["trials", "efficacy", "safety", "post"]
 
@@ -108,6 +111,47 @@ LANG = {
         "trial": "Nombre del ensayo: ", "registry": "ID de registro: ", "pubs": "Publicaciones disponibles:",
         "phase": "Fase {n}", "phase_na": "Fase no reportada",
         "grp_re": r"Grupo (vacunado|placebo):", "gmt": "Título medio geométrico",
+    },
+    "pt": {
+        "lang": "pt",
+        "cols": (11, 12, 13),
+        "hdr": ["Desfecho", "Desenho do estudo e número de participantes",
+                "País, seguimento e definição do desfecho", "Principais resultados"],
+        "efficacy_col": "Eficácia*", "sub_outcome": "Desfecho por subgrupo", "subgroup": "Subgrupo",
+        "ref": "Referência", "nc_desc": "Descrição do estudo e principais resultados",
+        "outcome": {"Antibody response": "Resposta de anticorpos", "Cellular response": "Resposta celular",
+                    "Contracting disease": "Contrair a doença",
+                    "Contracting severe disease": "Contrair a doença grave",
+                    "Any adverse event": "Qualquer evento adverso", "Serious adverse events": "Eventos adversos graves"},
+        "group": {"Children and adolescents": "Crianças e adolescentes", "Older adults": "Idosos",
+                  "Overall": "Geral"},
+        "h_eff": "Eficácia da vacina", "h_eff_sub": "Eficácia da vacina em subgrupos",
+        "h_effect": "Efetividade da vacina", "h_comp": "Estudos comparativos",
+        "h_nc": "Estudos não comparativos",
+        "t_imm": "Imunogenicidade da vacina {x}", "t_eff": "Eficácia da vacina {x}",
+        "t_eff_sub": "Eficácia da vacina {x} por subgrupo de interesse",
+        "t_effect": "Efetividade da vacina {x} (estudos comparativos)",
+        "t_saf": "Segurança da vacina {x}", "t_saf_sub": "Segurança da vacina {x} por subgrupo de interesse",
+        "t_comp": "Segurança pós-autorização da vacina {x} (estudos comparativos)",
+        "t_nc": "Segurança pós-autorização da vacina {x} (estudos não comparativos, evidência de baixa qualidade)",
+        "e_ab": "Não há estudos que relatem a resposta de anticorpos.",
+        "e_cell": "Não há estudos que relatem a resposta celular.",
+        "e_eff": "Não foram identificados estudos que relatassem a eficácia da vacina.",
+        "e_eff_sub": "Não foram identificados estudos que relatassem a eficácia da vacina por subgrupo de interesse.",
+        "e_effect": "Não foram identificados estudos que relatassem a efetividade da vacina.",
+        "e_saf": "Não foram identificados estudos que relatassem a segurança da vacina.",
+        "e_saf_sub": "Não foram identificados estudos que relatassem a segurança da vacina por subgrupo de interesse.",
+        "e_comp": "Não foram identificados estudos comparativos que relatassem a segurança da vacina "
+                  "após a sua autorização.",
+        "e_nc": "Não foram identificados estudos não comparativos que relatassem a segurança da vacina "
+                "após a sua autorização.",
+        "e_trials": "Não foram identificados ensaios clínicos randomizados que relatassem dados de eficácia e/ou "
+                    "segurança da vacina.",
+        "trials_intro": "Os seguintes ensaios clínicos randomizados relataram dados de eficácia e/ou "
+                        "segurança da vacina:",
+        "trial": "Nome do ensaio: ", "registry": "ID de registro: ", "pubs": "Publicações disponíveis:",
+        "phase": "Fase {n}", "phase_na": "Fase não relatada",
+        "grp_re": r"Grupo (vacinado|placebo):", "gmt": "Título médio geométrico",
     },
 }
 
@@ -225,14 +269,16 @@ def study_cells(r, L, where, prefix=None):
     return [cell(d), cell(country_cell(r[cf])), cell(results_cell(r[cg], L, prefix))], rid
 
 
-EVENT_SENTENCE = re.compile(r"(?:^|\n)([^\n]{3,90}?) se midió como", re.M)
+EVENT_SENTENCE = {"es": re.compile(r"(?:^|\n)([^\n]{3,90}?) se midió como", re.M),
+                  "pt": re.compile(r"(?:^|\n)([^\n]{3,90}?) (?:foi medid[oa]|foram medid[oa]s) como", re.M)}
 
 
 def event_name(L, r):
     """Evento de seguridad comparativa (columna D, en inglés). En español se toma la forma traducida de la
     frase «<evento> se midió como…» de la columna I; si no está, queda el nombre en inglés."""
-    if L["lang"] == "es" and len(r) > 8:
-        m = EVENT_SENTENCE.search(r[8] or "")
+    col = L["cols"][1]
+    if L["lang"] in EVENT_SENTENCE and len(r) > col:
+        m = EVENT_SENTENCE[L["lang"]].search(r[col] or "")
         if m:
             return m.group(1).strip()
     return r[3]
@@ -369,7 +415,7 @@ def build(rows, vaccine, lang="en", name=None, trials=None, allow_empty=False):
     L = LANG[lang]
     x = name or vaccine
     warn, refs = [], []
-    mine = [list(r) + [""] * (11 - len(r)) for r in rows if r and r[0] == vaccine]
+    mine = [list(r) + [""] * (14 - len(r)) for r in rows if r and r[0] == vaccine]
     if not mine and not allow_empty:
         names = sorted({r[0] for r in rows if r})
         raise ValueError(f"No hay filas de «{vaccine}». Nombres en las filas: {names}. "
@@ -384,8 +430,9 @@ def build(rows, vaccine, lang="en", name=None, trials=None, allow_empty=False):
     general = lambda sec: [r for r in S(sec) if r[3] == "Overall"]
     subgrp = lambda sec: [r for r in S(sec) if r[3] != "Overall"]
     post = S("Post-authorization safety")
-    if lang == "es" and not any(r[7] for r in mine):
-        warn.append("Las columnas H:J (español) están vacías")
+    if lang in ("es", "pt") and mine and not any(r[L["cols"][0]] for r in mine):
+        warn.append("Las columnas {} ({}) están vacías".format("H:J" if lang == "es" else "L:N",
+                                                              "español" if lang == "es" else "portugués"))
 
     imm = general("Immunogenicity")
     ab = [r for r in imm if r[2] == "Antibody response"]
@@ -447,10 +494,10 @@ def txt(n):
 
 
 def counts(doc):
-    s = json.dumps(doc)
+    s = json.dumps(doc, ensure_ascii=False)
     return {"tablas": s.count('"type": "table"'), "citas": s.count('"type": "reference"'),
             "sin_estudios": len(re.findall(
-                r'"text": "(?:No studies|No comparative|No non-comparative|There are no|No se identificaron|No hay)', s))}
+                r'"text": "(?:No studies|No comparative|No non-comparative|There are no|No se identificaron|No hay|Não foram identificad|Não há)', s))}
 
 
 def preview(docs, width=100):
@@ -532,7 +579,7 @@ def cmd_inspect(a):
 def cmd_build(a):
     rows = json.load(open(a.rows, encoding="utf-8"))
     trials = json.load(open(a.trials, encoding="utf-8")) if a.trials else None
-    if a.lang == "es" and not a.name:
+    if a.lang in ("es", "pt") and not a.name:
         sys.exit("En español hace falta --name, p. ej. «Vimkunya contra chikungunya» (como en las síntesis de referencia)")
     try:
         docs, refs, warn = build(rows, a.vaccine, a.lang, a.name, trials, a.allow_empty)
@@ -623,8 +670,8 @@ def cmd_sync(a):
     M = merge_module()
     rows = json.load(open(a.rows, encoding="utf-8"))
     trials = json.load(open(a.trials, encoding="utf-8")) if a.trials else None
-    if a.lang == "es" and not a.name:
-        sys.exit("En español hace falta --name, p. ej. «Vimkunya contra chikungunya»")
+    if a.lang in ("es", "pt") and not a.name:
+        sys.exit("En español y portugués hace falta --name, p. ej. «Vimkunya contra chikungunya»")
     sid, secs = synthesis_id(a.synthesis), section_ids(a.lang)
     d, by, existing = read_state(sid, secs)
     try:
@@ -632,6 +679,16 @@ def cmd_sync(a):
                                            a.include_flagged, a.add_missing_tables, a.allow_empty, a.update_changed)
     except ValueError as e:
         sys.exit(str(e))
+    if a.only:
+        keep = {k.strip() for k in a.only.split(",")}
+        bad = keep - set(SECTION_ORDER)
+        if bad:
+            sys.exit("--only acepta: " + ",".join(SECTION_ORDER))
+        for k in [k for k in out if k not in keep]:
+            log.append(f"(--only) no se escribe: {SECTIONS[k][a.lang]}")
+            del out[k]
+        kept = json.dumps(out)
+        refs = [r for r in refs if r in kept]
     print("Síntesis:", d["sk_syntheses_by_pk"]["name"])
     print("\n".join(log))
     for w in warn:
@@ -727,7 +784,7 @@ def main(argv=None):
     b = sub.add_parser("build")
     b.add_argument("--rows", required=True, help="JSON con las filas A:K de Tablas_capa_1")
     b.add_argument("--vaccine", required=True, help="Nombre exacto de la columna A, p. ej. «Gardasil 4 HPV vaccine»")
-    b.add_argument("--lang", choices=["en", "es"], default="en")
+    b.add_argument("--lang", choices=["en", "es", "pt"], default="en")
     b.add_argument("--name", help="Nombre en los títulos (obligatorio en español): «Vimkunya contra chikungunya»")
     b.add_argument("--trials", help="JSON [{phase,name,registry,refs}] si no sale de las filas")
     b.add_argument("--out", required=True)
@@ -744,12 +801,13 @@ def main(argv=None):
     sy = sub.add_parser("sync", help="Agrega solo lo nuevo a una síntesis ya poblada, sin borrar nada")
     sy.add_argument("--rows", required=True)
     sy.add_argument("--vaccine", required=True)
-    sy.add_argument("--lang", choices=["en", "es"], default="en")
+    sy.add_argument("--lang", choices=["en", "es", "pt"], default="en")
     sy.add_argument("--name")
     sy.add_argument("--trials")
     sy.add_argument("--synthesis", required=True)
     sy.add_argument("--allow-empty", action="store_true")
     sy.add_argument("--include-flagged", action="store_true", help="Agrega también las filas «para revisar»")
+    sy.add_argument("--only", help="Solo escribe estas secciones, separadas por coma: trials,efficacy,safety,post")
     sy.add_argument("--update-changed", action="store_true",
                     help="Reemplaza el texto de las filas publicadas que cambiaron en la planilla (por defecto solo las informa)")
     sy.add_argument("--add-missing-tables", action="store_true",

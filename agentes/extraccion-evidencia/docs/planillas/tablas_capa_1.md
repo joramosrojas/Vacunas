@@ -24,6 +24,9 @@ Pestaña `Tablas_capa_1`, `sheetId` 1851227287 en ambas. Fila 1 = encabezados. L
 | I | País, seguimiento y definición de resultados | Español |
 | J | Resultados principales | Español |
 | K | Fecha | Fecha de carga, formato `28 Octubre 2026` (día, mes con mayúscula en español, año) |
+| L | Desenho do estudo e número de participantes | Portugués (traducción de H) |
+| M | País, seguimento e definição do desfecho | Portugués (traducción de I) |
+| N | Principais resultados | Portugués (traducción de J) |
 
 Una fila por **desenlace** y por **grupo**: un artículo con enfermedad y enfermedad grave genera 2 filas.
 
@@ -67,6 +70,10 @@ En estudios ecológicos (antes/después) la última frase es `Disease occurrence
 - Reducción de tasa (antes/después), como la fila de Gentile: `Reduction in hospitalization rate:\nIRR: 65% (95% CI: Not reported)\nRate per 100,000 child-years: 15.7 (before licensure) vs 5.5 (after licensure); RR: 2.9 (95% CI: 2.4 - 3.6)`
 - Sin IC en el artículo: `(95% CI: Not reported)`. No inventar ni calcular IC propios.
 - Varios grupos (comunidades, temporadas): líneas en la misma celda.
+
+## Portugués (L, M, N)
+
+Agregadas el 2026-11-18 para subir a las síntesis en portugués de SK. Se llenan traduciendo H:J (mismo formato que el español; las cifras de resultados siguen el formato ya publicado en la síntesis portuguesa). La fecha de carga sigue en K. Por ahora solo tiene texto la fila 2396 (EA graves de FUTURE III, Gardasil 4); el resto se llena cuando se suba cada vacuna en portugués.
 
 ## Formato en español (H, I, J)
 

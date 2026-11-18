@@ -261,3 +261,41 @@ class Merge(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Portuguese(unittest.TestCase):
+    """Portugués: lee L:N de Tablas_capa_1 y reconoce las tablas de las síntesis en portugués."""
+
+    def pt_row(self, rid="a" * 40):
+        row = r("Safety", "Serious adverse events", "Overall", rid, "Autor A, 2024")
+        return row + [e("TRIAL-1", rid, "Autor A, 2024").replace("Phase 3 randomized trial",
+                                                                    "Ensaio randomizado de fase 3"),
+                      "Estados Unidos\n\nSeguimento: 6 meses.\n\nForam medidos os eventos adversos graves.",
+                      "Eventos adversos graves: 3/100 (grupo vacinado) vs 7/100 (grupo placebo)"]
+
+    def test_classify_pt_titles(self):
+        def t(title, head="Desfecho"):
+            return {"type": "table", "content": [{"content": [S.cell([S.P(S.T(title))])]},
+                                                 {"content": [S.cell([S.P(S.T(head))])]}]}
+        self.assertEqual(M.classify(t("Segurança da vacina X")), "saf")
+        self.assertEqual(M.classify(t("Segurança da vacina X por subgrupo de interesse", "Subgrupo")), "saf_sub")
+        self.assertEqual(M.classify(t("Eficácia da vacina X")), "eff")
+        self.assertEqual(M.classify(t("Efetividade da vacina X (estudos comparativos)")), "effect")
+        self.assertEqual(M.classify(t("Imunogenicidade da vacina X")), "imm")
+        self.assertEqual(M.classify(t("Segurança pós-autorização da vacina X (estudos não comparativos)")), "nc")
+        self.assertEqual(M.classify(t("Segurança pós-autorização da vacina X (estudos comparativos)")), "comp")
+
+    def test_build_pt_uses_columns_l_to_n(self):
+        docs, _, warn = S.build([self.pt_row()], V, "pt", "Vimkunya contra chikungunya")
+        flat = " ".join(texts(docs["safety"]))
+        self.assertIn("3/100 (grupo vacinado) vs 7/100 (grupo placebo)", flat)
+        self.assertIn("Segurança da vacina Vimkunya contra chikungunya", flat)
+        self.assertFalse(any("L:N" in w for w in warn))
+
+    def test_build_pt_rejects_rows_without_pt_text(self):
+        with self.assertRaises(ValueError):
+            S.build([r("Safety", "Any adverse event", "Overall", "a" * 40, "Autor A, 2024")], V, "pt", "X")
+
+    def test_pt_placeholder_counted(self):
+        doc = {"type": "doc", "content": [S.P(S.T("Não foram identificados estudos que relatassem a segurança."))]}
+        self.assertEqual(S.counts(doc)["sin_estudios"], 1)
